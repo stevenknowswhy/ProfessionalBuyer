@@ -24,7 +24,7 @@ Everyone may make **additive** changes to `contract/` following [CONTRACT.md](CO
 - **Money:** every dollar figure comes from `contract/src/landed-cost.ts`. Never type a number into UI or copy. Money is integer cents.
 - **Spending:** the model has no tool that spends money. Spending happens only in `POST /api/approvals/:id/approve`, after cap, merchant allowlist and offer-hash checks. `CHECKOUT_MODE=review` unless the human says otherwise.
 - **Honesty:** every external call has a fallback, and every fallback is labeled (`provenance`, `usingFallback`). Never show cached or sample data as live.
-- **Secrets:** never commit `.env` or keys. Payment details live in a Kernel Vault only. If a key is missing, use the fallback and say so in the PR description; do not stop.
+- **Secrets:** names and sources are in [KEYS.md](KEYS.md) and [`.env.example`](.env.example). Never commit `.env` or keys. Payment details live in a Kernel Vault only. If a key is missing, use the fallback and say so in the PR description; do not stop.
 - **Lockfile:** on a `pnpm-lock.yaml` conflict, take `main`'s version, run `pnpm install`, commit. Never hand-merge it.
 - **Versions:** install `ai`, `@ai-sdk/*`, `@assistant-ui/*`, `@mastra/*` at `@latest` together. Mastra `chatRoute` must use `version: 'v7'`. Do not copy code from examples written for `ai@5` or `ai@6`.
 

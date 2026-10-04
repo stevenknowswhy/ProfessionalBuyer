@@ -26,7 +26,7 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 ## Setup facts
 
 - Node 22+, pnpm workspace. Add `agent/` (listed in `pnpm-workspace.yaml`).
-- Env names: [techStack.md](techStack.md#environment-variables). Rewrite `.env.example` on `main` to use Neon's names (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`) instead of `NEON_DATABASE_URL`, and add every name the three agents need. Never commit secrets. If a key is missing, build against the fallback, mark it in `Health`, and list it in your PR description.
+- Env names: [`.env.example`](.env.example) and [KEYS.md](KEYS.md) (already aligned with Neon's `DATABASE_URL` names). Never commit secrets. If a key is missing, build against the fallback, mark it in `Health`, and list it in your PR description.
 - Ports: Mastra server 4111. Custom REST routes use `registerApiRoute` from `@mastra/core/server`. Chat: `chatRoute({ path: '/chat/:agentId', version: 'v7' })` from `@mastra/ai-sdk`, agent key `buyer`, so the URL is `/chat/buyer`. **`version: 'v7'` is required** (assistant-ui needs AI SDK v7; the default is v5). CORS on the Mastra `server.cors` option for `http://localhost:3000`.
 - Scaffold with `npx create-mastra@latest`, then install `@mastra/core @mastra/ai-sdk @mastra/pg @mastra/mcp ai` at `@latest` together.
 - **Read these skills before coding** (in `.claude/skills/`): `mastra`, `neon-postgres`, `neon-ai-gateway`, `build-with-exa`. The Mastra docs MCP server is configured in `.cursor/mcp.json`.
@@ -38,7 +38,7 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 
 - `agent/` Mastra project; server on :4111; CORS for :3000.
 - All `ENDPOINTS` served from fixtures, including `GET /api/trace` as SSE replaying `trace.sample.json` 400 ms apart. `POST /chat/buyer` is a canned agent that calls `showSavings` with the sample run.
-- `.env.example` rewritten (`.coderabbit.yaml` is already in the repo), `pnpm dev` starts the server.
+- `.env.example` and `.coderabbit.yaml` are already in the repo (see [KEYS.md](KEYS.md)); add names only if you need new ones. `pnpm dev` starts the server.
 - **Done when:** `curl localhost:4111/api/savings/latest` passes `SavingsRun.parse`. Merge immediately.
 
 ### B1. 12:40 to 1:30: the number, real
