@@ -1,0 +1,9 @@
+{
+  "name": "professional-buyer",
+  "private": true,
+  "packageManager": "pnpm@10.33.3",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "contract:check": "pnpm --filter @buyer/contract check"
+  }
+}

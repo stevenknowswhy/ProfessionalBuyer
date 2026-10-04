@@ -1,0 +1,75 @@
+[
+  {
+    "id": "t1",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "agentmail",
+    "label": "Receipt received from inbox",
+    "status": "ok",
+    "durationMs": 120,
+    "provenance": "sample"
+  },
+  {
+    "id": "t2",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "laya",
+    "label": "Triage: receipt (0.97)",
+    "status": "ok",
+    "durationMs": 28,
+    "provenance": "sample"
+  },
+  {
+    "id": "t3",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "mastra",
+    "label": "Parsed 3 line items, totals reconcile",
+    "status": "ok",
+    "durationMs": 2100,
+    "provenance": "sample"
+  },
+  {
+    "id": "t4",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "neon",
+    "label": "Wrote 3 purchases",
+    "status": "ok",
+    "durationMs": 40,
+    "provenance": "sample"
+  },
+  {
+    "id": "t5",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "exa",
+    "label": "Searched local / shipped / long-haul for 6 items",
+    "status": "ok",
+    "durationMs": 4800,
+    "provenance": "sample"
+  },
+  {
+    "id": "t6",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "executor",
+    "label": "exa.search allowed by policy",
+    "status": "ok",
+    "durationMs": 15,
+    "provenance": "sample",
+    "policy": "allow"
+  },
+  {
+    "id": "t7",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "mastra",
+    "label": "Computed landed cost and ranked offers",
+    "status": "ok",
+    "durationMs": 12,
+    "provenance": "sample"
+  },
+  {
+    "id": "t8",
+    "at": "2026-10-04T19:00:00.000Z",
+    "sponsor": "kernel",
+    "label": "Verified top offer price (read-only)",
+    "status": "ok",
+    "durationMs": 5200,
+    "provenance": "sample"
+  }
+]

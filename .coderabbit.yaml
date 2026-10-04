@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://www.coderabbit.ai/integrations/schema.v2.json
+# Reviews must be triggered by a human comment ("@coderabbitai full review") until the repo has 10 stars.
+language: en-US
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: true
+  path_filters:
+    - "!contract/fixtures/**"
+    - "!.claude/skills/**"
+    - "!pnpm-lock.yaml"
+  path_instructions:
+    - path: "contract/src/landed-cost.ts"
+      instructions: |
+        Money math, the single source of truth for every dollar figure. Check units, rounding, integer cents,
+        and the (n-1)/span_days cadence rule. Every behavior change needs a test in contract/src/contract.test.ts.
+    - path: "contract/src/**"
+      instructions: |
+        Shared contract between three parallel agents. Flag any breaking change (rename, removal, retype,
+        optional-to-required). Additive changes are fine. Fixtures must be regenerated, never hand-edited.
+    - path: "agent/src/**/approval*"
+      instructions: |
+        This code spends money. Verify the cap, merchant allowlist and offer-hash checks run server-side before
+        checkout, that the model has no tool that can spend, and that nothing logs payment data.
+    - path: "integrations/src/**/kernel*"
+      instructions: |
+        Checkout automation. Verify it aborts when the page total differs from the expected total, stops at the
+        review page in review mode, never reads payment details from env or the model, and logs no payment data.
+    - path: "db/schema.sql"
+      instructions: |
+        Must stay idempotent (IF NOT EXISTS) and match contract/src/index.ts. Flag destructive changes.
+    - path: "seed/**"
+      instructions: |
+        Fixtures must not contain answers (no "compare" lines or cadence hints in receipt text).
+    - path: "web/**"
+      instructions: |
+        The UI must never compute or hard-code a dollar figure; it displays contract values. Non-live data must be
+        visibly labeled. Check accessibility (focus states, hit areas, reduced motion) and tabular figures for money.
+chat:
+  auto_reply: true
