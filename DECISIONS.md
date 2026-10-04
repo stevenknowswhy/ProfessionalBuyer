@@ -107,14 +107,14 @@ Checked templates, skills and vendor docs before starting the agents. Changes:
 - Vendored 16 official skills into `.claude/skills/` (pinned commits, licenses kept); AgentMail's unlicensed skill is
   installed at runtime instead. Added `AGENTS.md`, docs MCP servers in `.cursor/mcp.json`, and `.coderabbit.yaml`.
 
-## 2026-10-04 ~13:30 — No Neon AI Gateway; OpenRouter free router instead
+## 2026-10-04 ~13:45 — OpenAI by default, OpenRouter free router as fallback
 
-The Neon project (professional-buyer, aws-us-east-2) is on a plan without the AI Gateway, and the
-owner confirmed we will not use it. Neon is still the database: Postgres, Mastra PostgresStore, and
-the shared bus between the agent server and the Sprite worker.
+The Neon project (professional-buyer, aws-us-east-2) is on a plan without the AI Gateway, so Neon is
+the database only.
 
-All LLM calls go through OpenRouter (https://openrouter.ai/api/v1) using the model `openrouter/free`,
-which routes each request to a random free model that supports the features the request needs, such as
-tool calling and structured output. The key is OPENROUTER_API_KEY. This costs nothing, at the price of
-low rate limits and variable model quality, which is acceptable for a demo. The status page labels model
-calls "OpenRouter free".
+Model calls use OpenAI (OPENAI_API_KEY, gpt-4o-mini) by default. When OpenAI returns a rate limit or a
+server error, or the key is missing, the same request is retried through OpenRouter
+(https://openrouter.ai/api/v1, OPENROUTER_API_KEY) with the model `openrouter/free`, which routes to a
+free model that supports the request's features, such as tool calling and structured output. The trace
+and the status page record which provider answered. Both keys were verified with a live completion on
+Oct 4.
