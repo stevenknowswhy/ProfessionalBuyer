@@ -70,12 +70,16 @@ console.log(`[deploy] sprite URL ${info.sprite_url}`);
 const home = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "bash", "-lc", "printf %s \"$HOME\""]).trim();
 if (!home.startsWith("/")) throw new Error("could not read the sprite home directory");
 const appDir = `${home}/buyer-worker`;
-must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "mkdir", "-p", appDir]);
+must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "bash", "-lc", `mkdir -p ${appDir}`]);
 
 const bundlePath = join(workerDir, "dist", "index.js");
 const bundle = readFileSync(bundlePath);
-must(["-o", org, "-s", name, "file", "push", bundlePath, `${appDir}/index.js`]);
-must(["-o", org, "-s", name, "file", "push", join(workerDir, "scripts/sprite-start.sh"), `${appDir}/start.sh`]);
+const startPath = join(workerDir, "scripts/sprite-start.sh");
+// `sprite file push` stats the remote path on the local machine. `--file` uploads into the sprite.
+const upload = (local: string, remote: string) =>
+  must(["-o", org, "-s", name, "exec", "--file", `${local}:${remote}`, "--no-stdin", "--", "true"]);
+upload(bundlePath, `${appDir}/index.js`);
+upload(startPath, `${appDir}/start.sh`);
 must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "chmod", "+x", `${appDir}/start.sh`]);
 
 const envFile = [
