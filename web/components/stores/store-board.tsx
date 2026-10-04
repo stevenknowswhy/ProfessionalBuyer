@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CATALOG,
   STORE_GROUPS,
@@ -71,17 +71,45 @@ export function StoreBoard({
   onToggle: (id: string) => void;
   onAddLink: (raw: string) => string;
   onRemoveCustom: (id: string) => void;
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<GroupFilter>("all");
   const [link, setLink] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
+  const [found, setFound] = useState<{ id: string; name: string; domain: string; url: string }[]>([]);
+  const [scoutAt, setScoutAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    let stop = false;
+    async function load() {
+      try {
+        const res = await fetch("/api/stores/discovered", { cache: "no-store" });
+        const json = (await res.json()) as { updatedAt?: string | null; stores?: { id: string; name: string; domain: string; url: string }[] };
+        if (stop) return;
+        setFound(Array.isArray(json.stores) ? json.stores : []);
+        setScoutAt(json.updatedAt ?? null);
+      } catch {
+        if (!stop) setFound([]);
+      }
+    }
+    load();
+    const timer = window.setInterval(load, 30_000);
+    return () => {
+      stop = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   const matches = useMemo(() => storesMatching(query, group, selection.selectedIds), [query, group, selection.selectedIds]);
   const custom = useMemo(() => customMatching(query, group, selection), [query, group, selection]);
   const chosen = chosenStores(selection);
   const groups = STORE_GROUPS.filter((item) => matches.some((store) => store.group === item.id));
+  const scoutMatches = found.filter((store) => {
+    if (group === "added" && !selection.selectedIds.includes(`custom:${store.domain}`) && !selection.selectedIds.includes(store.id)) return false;
+    const q = query.trim().toLowerCase();
+    return !q || store.name.toLowerCase().includes(q) || store.domain.includes(q);
+  });
 
   function submitLink(event: React.FormEvent) {
     event.preventDefault();
@@ -91,7 +119,7 @@ export function StoreBoard({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-6">
+    <div className={cn("mx-auto flex w-full max-w-5xl flex-col gap-8", onClose ? "px-6 py-6" : "gap-6 py-1")}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-xl flex-col gap-2">
           <h2 className="type-heading text-ink">Stores</h2>
@@ -100,9 +128,11 @@ export function StoreBoard({
             Paste a link for a store that is not listed.
           </p>
         </div>
-        <button type="button" onClick={onClose} className="pressable min-h-10 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised">
-          Back to the ledger
-        </button>
+        {onClose && (
+          <button type="button" onClick={onClose} className="pressable min-h-10 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised">
+            Back to the ledger
+          </button>
+        )}
       </div>
 
       <section aria-labelledby="stores-searching" className="surface flex flex-col gap-3 p-4">
@@ -157,6 +187,44 @@ export function StoreBoard({
           {notice ?? "A known store, including eBay, Temu, and Etsy, is switched on. Any other address is added under Your links."}
         </p>
       </form>
+
+      {(group === "all" || group === "big-box" || group === "added") && (
+      <section aria-labelledby="stores-scout" className="flex flex-col gap-3">
+        <div>
+          <h3 id="stores-scout" className="text-small font-semibold text-ink">
+            Big-box scout
+          </h3>
+          <p className="text-small text-ink-soft">
+            A scanner asks OpenRouter&apos;s free models for big-box stores most families use, checks the site, and adds the ones that answer.
+            {scoutAt ? ` Last pass ${new Date(scoutAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}.` : " Waiting for the first pass."}
+          </p>
+        </div>
+        {scoutMatches.length === 0 ? (
+          <p className="text-small text-ink-soft">No new stores yet. Walmart, Target, Costco, Sam&apos;s Club, BJ&apos;s, Amazon, and Meijer are already in the list.</p>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {scoutMatches.map((store) => (
+              <li key={store.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const message = onAddLink(store.url);
+                    setNotice(message);
+                  }}
+                  className="pressable flex min-h-14 w-full items-center justify-between gap-3 rounded-chip border border-rule bg-paper-raised px-4 text-left"
+                >
+                  <span>
+                    <span className="block text-body font-semibold text-ink">{store.name}</span>
+                    <span className="block text-micro text-ink-faint">{store.domain}</span>
+                  </span>
+                  <span className="text-micro font-semibold text-ink-soft">Add</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      )}
 
       <div className="flex flex-col gap-3">
         <label className="relative block">
