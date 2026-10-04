@@ -436,7 +436,7 @@ These change how we build. Each was checked against vendor docs or source today.
 
 | Area | Constraint | What we do |
 |---|---|---|
-| Neon AI Gateway | Needs a paid plan we do not have | **Not used.** All LLM calls go through `OPENAI_API_KEY` directly, labeled "direct" in the status page. Neon still provides Postgres |
+| LLM | Neon AI Gateway needs a paid plan we do not have | **OpenRouter free router.** `OPENROUTER_API_KEY` with base URL `https://openrouter.ai/api/v1` and model `openrouter/free`, which picks a free model that supports tool calling and structured output. Labeled "OpenRouter free" in the status page |
 | Mastra + assistant-ui | assistant-ui needs AI SDK v7; `chatRoute` defaults to v5 | `chatRoute({ path: '/chat/:agentId', version: 'v7' })`, all AI packages at `@latest` together |
 | Approval | Native v7 approval round-trip is not covered by Mastra's end-to-end tests | REST approval is the contract; native approval is a stretch |
 | Sprites | Paused Sprites drop TCP; a task keeps one awake for at most 1 hour per renewal | Service plus renewed task; no WebSocket on the Sprite |
