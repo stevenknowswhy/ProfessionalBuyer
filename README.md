@@ -32,6 +32,20 @@ See [STRATEGY.md](STRATEGY.md) and [INFLUENCE.md](INFLUENCE.md).
 
 Full concept: [CONCEPT.md](CONCEPT.md) · Build scope: [MVP.md](MVP.md)
 
+## Quickstart
+
+> 🚧 Live hackathon build — the full quickstart lands with the first code push today.
+> Skeleton below so contributors know where it's going.
+
+```bash
+git clone https://github.com/stevenknowswhy/ProfessionalBuyer.git
+cd ProfessionalBuyer
+cp .env.example .env   # add EXA_API_KEY, KERNEL_API_KEY, AGENTMAIL_API_KEY, NEON_DATABASE_URL, …
+# TODO(team): install + seed + dev commands — see CONTRIBUTING.md
+```
+
+Contributor guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Files
 
 - [CONCEPT.md](CONCEPT.md) — the idea, agent-ified feature set, demo money-shot, scope cuts
