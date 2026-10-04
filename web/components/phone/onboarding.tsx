@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Wordmark } from "@/components/shell/top-bar";
 import { AddressFields, InternationalChoices, ProfileReview, ShoppingChoices } from "@/components/phone/profile-fields";
+import { StoreBuilder } from "@/components/phone/store-builder";
 import { INTERNATIONAL_QUESTION, profileErrors, type HouseholdProfile, type ProfileField } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ export function Onboarding({
   onComplete: (profile: HouseholdProfile) => void;
 }) {
   const [step, setStep] = useState(0);
+  const [building, setBuilding] = useState(false);
   const [draft, setDraft] = useState(initial);
   const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>({});
   const page = STEPS[step];
@@ -54,6 +56,11 @@ export function Onboarding({
     const nextErrors = profileErrors(draft, page.fields);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
+    if (step === 0) {
+      setBuilding(true);
+      window.scrollTo(0, 0);
+      return;
+    }
     if (step < STEPS.length - 1) {
       setStep((current) => current + 1);
       window.scrollTo(0, 0);
@@ -78,6 +85,22 @@ export function Onboarding({
         </div>
       </header>
 
+      {building ? (
+        <StoreBuilder
+          address={draft}
+          onBack={() => {
+            setBuilding(false);
+            window.scrollTo(0, 0);
+          }}
+          onDone={() => {
+            setBuilding(false);
+            setStep(1);
+            window.scrollTo(0, 0);
+          }}
+        />
+      ) : null}
+
+      {!building && (
       <main className="flex w-full min-w-0 flex-1 flex-col gap-5 px-4 pt-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
         <div className="flex flex-col gap-2">
           <h1 className={cn("text-ink text-balance", step === 2 ? "text-[1.45rem] leading-snug font-display" : "type-heading text-[1.75rem]")}>
@@ -97,7 +120,9 @@ export function Onboarding({
         )}
         {step === 3 && <ProfileReview profile={draft} />}
       </main>
+      )}
 
+      {!building && (
       <footer className="phone-tabs fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-paper-raised">
         <div className="mx-auto flex w-full max-w-3xl gap-3 px-4 py-3">
           {step > 0 && (
@@ -122,6 +147,7 @@ export function Onboarding({
           </button>
         </div>
       </footer>
+      )}
     </div>
   );
 }
