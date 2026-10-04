@@ -17,7 +17,7 @@ Check the hackathon page and sponsor tables for credit codes before paying for a
 | 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Key works, but **not used**. The app shows a link to the offer and does not buy it | — |
 | 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to) | ✅ verified. Inbox `signal-os-concierge@agentmail.to`. Receipts can be forwarded there | ✅ |
 | 6 | **Fly.io** | `FLY_API_TOKEN` | [fly.io/dashboard/personal/tokens](https://fly.io/dashboard/personal/tokens) | ✅ verified. Org `personal` (Stefano94120). This is a Fly token, not a Sprites token | ✅ |
-| 6b | **Sprites** | `SPRITES_TOKEN` | [sprites.dev/account](https://sprites.dev/account) | Still needed. A Fly token is rejected by `api.sprites.dev`. Mint an org token there (shape `org/id/token-id/secret`) | ☐ |
+| 6b | **Sprites** | org `stefano94120` | Signed in on this machine | ✅ Sprite `buyer-worker` is up at https://buyer-worker-b3y4b.sprites.app | ✅ |
 
 ## 2. Set up, but no key to paste
 
