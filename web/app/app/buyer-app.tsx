@@ -52,7 +52,7 @@ export function BuyerApp() {
           bodyClassName="flex flex-col px-0 pb-0"
           aside={<ProvenanceBadge source={DATA_SOURCE} />}
         >
-          <div className="mx-auto flex w-full max-w-[45rem] flex-1 flex-col px-6 py-4">
+          <div className="mx-auto flex w-full max-w-[45rem] flex-col gap-10 px-6 py-4 pb-8">
             {savings.error ? (
               <DataError error={savings.error} onRetry={() => savings.mutate()} />
             ) : savings.data === undefined ? (
@@ -65,11 +65,7 @@ export function BuyerApp() {
             ) : (
               <SavingsDesk household={household.data} savings={savings.data} source={DATA_SOURCE} />
             )}
-          </div>
-          <div className="sticky bottom-0 bg-gradient-to-t from-paper from-70% to-transparent pt-6 pb-5">
-            <div className="mx-auto w-full max-w-[45rem] px-6">
-              <ComposerPreview />
-            </div>
+            <ComposerPreview />
           </div>
         </Zone>
 
