@@ -4,6 +4,8 @@
   "packageManager": "pnpm@10.33.3",
   "engines": { "node": ">=22" },
   "scripts": {
-    "contract:check": "pnpm --filter @buyer/contract check"
+    "contract:check": "pnpm --filter @buyer/contract check",
+    "integrations:check": "pnpm --filter @buyer/integrations check",
+    "worker": "pnpm --filter worker start"
   }
 }
