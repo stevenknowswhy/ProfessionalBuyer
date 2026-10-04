@@ -1,0 +1,21 @@
+Subject: Your Amazon.com order #112-3948571-2026023 has shipped
+From: auto-confirm@amazon.com
+Date: Mon, 29 Sep 2026 09:14:00 -0700
+
+Hello,
+
+Your order has shipped. Details below.
+
+Order #112-3948571-2026023 | Placed September 28, 2026
+
+Shipped items:
+1x Amazon Basics Paper Towels, 12 Double Rolls — $24.99
+2x Seventh Generation Dish Soap, 19oz — $7.98 ($3.99 ea)
+1x Duracell Coppertop AA Batteries, 24-pack — $13.49
+
+Subtotal: $46.46
+Shipping: $0.00 (Prime)
+Estimated tax: $4.18
+Order total: $50.64
+
+Track your package: https://amazon.com/orders
