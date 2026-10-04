@@ -4,6 +4,16 @@
   "packageManager": "pnpm@10.33.3",
   "engines": { "node": ">=22" },
   "scripts": {
-    "contract:check": "pnpm --filter @buyer/contract check"
+    "contract:check": "pnpm --filter @buyer/contract check",
+    "dev:agent": "pnpm --filter @buyer/agent dev",
+    "dev:web": "pnpm --filter web dev",
+    "contract:smoke": "pnpm --filter @buyer/agent smoke",
+    "integrations:check": "pnpm --filter @buyer/integrations check",
+    "worker": "pnpm --filter worker start"
+  },
+  "dependencies": {
+    "@neon/config": "^1.8.3",
+    "@neon/env": "^1.5.0",
+    "pg": "^8.23.1"
   }
 }

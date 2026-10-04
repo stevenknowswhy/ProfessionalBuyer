@@ -6,6 +6,10 @@ Counterparts, running in parallel: [PLAN-backend.md](PLAN-backend.md) (core) and
 
 ## Mission
 
+## Scope lock
+
+Do not build Kernel checkout, live view, or a Vault payment. The product only stores an offer URL. Your jobs are AgentMail (inbox `signal-os-concierge@agentmail.to`) and the Sprite worker `buyer-worker` (org `stefano94120`, URL https://buyer-worker-b3y4b.sprites.app), which is already created. Replace Laya triage with Jev: `typesafe/jev-1.13` via `POST https://openrouter.ai/api/alpha/decisions` and `OPENROUTER_API_KEY`. Code already exists on this branch for a Kernel client and a Laya client. Leave the Kernel client unused and switch triage to Jev.
+
 Own the four integrations that are slow, flaky, and need their own trial and error, so they do not stall the core pipeline:
 
 - **Kernel:** read-only offer verification and approval-gated checkout with live view, Vault payment and replays.
@@ -21,7 +25,7 @@ Branch: `cursor/integrations-5766`. Small PRs into `main` at every gate.
 
 ## Skills and docs
 
-- **Read before coding** (in `.claude/skills/`): `kernel-typescript-sdk`, `sprites`, `neon-postgres`. For AgentMail, install the official skill into your VM only (its repo has no license, so it is not committed): `npx skills add agentmail-to/agentmail-skills --skill agentmail -g -y`. Do not commit anything it writes.
+- **Read before coding** (in `.claude/skills/`): `kernel-typescript-sdk`, `sprites`, `neon-postgres`, and the AgentMail skills `agentmail`, `agentmail-toolkit`, `agentmail-send-email`, `agentmail-check-email`, `agentmail-manage-inboxes`, `agentmail-mcp`, `agentmail-cli`.
 - Kernel: [live view](https://kernel.sh/docs/browsers/live-view.md), [vault fill](https://kernel.sh/docs/vaults/fill.md), [payments](https://kernel.sh/docs/browsers/payments.md). A completed fill is not proof of payment: check the order-review total in code. The org is now `kernel`; ignore the deprecated `@onkernel/create-kernel-app`.
 - Sprites: [keeping Sprites running](https://docs.fly.io/sprites/keeping-sprites-running.md). AgentMail: [WebSocket quickstart](https://docs.agentmail.to/websockets/quickstart.md); examples in `agentmail-to/agentmail-examples` pin `agentmail ^0.4` (current 0.5.x), so use them for patterns only.
 

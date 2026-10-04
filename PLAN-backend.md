@@ -6,6 +6,10 @@ Counterparts, running in parallel: [PLAN-frontend.md](PLAN-frontend.md) (UI) and
 
 ## Mission
 
+## Scope lock
+
+The app does not buy anything. Do not call Kernel and do not implement checkout. `proposePurchase` is not a purchase: return the best offer and its URL. Serve `contract/fixtures` as the demo data and label them sample. Receipt triage, when you add it, calls Jev at `typesafe/jev-1.13` on `https://openrouter.ai/api/alpha/decisions` with `OPENROUTER_API_KEY`. Chat uses OpenAI `gpt-4o-mini`, falling back to OpenRouter `openrouter/free`. `agent/` already has a Mastra server stub. Finish it, do not rewrite it from scratch.
+
 Make the REST and chat contract **real**: the Mastra server, Neon, the receipt-to-number pipeline (ingest, Exa scan, landed cost, the yearly number), the agent and its tools, Executor, and the approval gate. You are the hub: the frontend calls you, and you call the integrations package.
 
 ## Owns
@@ -30,7 +34,7 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 - Ports: Mastra server 4111. Custom REST routes use `registerApiRoute` from `@mastra/core/server`. Chat: `chatRoute({ path: '/chat/:agentId', version: 'v7' })` from `@mastra/ai-sdk`, agent key `buyer`, so the URL is `/chat/buyer`. **`version: 'v7'` is required** (assistant-ui needs AI SDK v7; the default is v5). CORS on the Mastra `server.cors` option for `http://localhost:3000`.
 - Scaffold with `npx create-mastra@latest`, then install `@mastra/core @mastra/ai-sdk @mastra/pg @mastra/mcp ai` at `@latest` together.
 - **Read these skills before coding** (in `.claude/skills/`): `mastra`, `neon-postgres`, `neon-ai-gateway`, `build-with-exa`. The Mastra docs MCP server is configured in `.cursor/mcp.json`.
-- **Neon AI Gateway** needs a paid plan with prepaid credits and a supported region ([constraints](techStack.md#verified-constraints-checked-oct-4-1215-pm)). If `NEON_AI_GATEWAY_TOKEN` is missing or a call fails, use the direct provider key and mark Neon Gateway as fallback in `Health`. Do not spend more than 10 minutes on it.
+- **LLM calls use OpenAI by default and OpenRouter as fallback.** The Neon AI Gateway needs a paid plan we do not have. Default: `OPENAI_API_KEY` with `gpt-4o-mini`. On a 429, a 5xx, or a missing key, retry the same request through OpenRouter (`baseURL: "https://openrouter.ai/api/v1"`, `apiKey: OPENROUTER_API_KEY`, `model: "openrouter/free"`), which picks a free model supporting tool calling and structured output. Record which provider served the call in the trace event and in `Health`. Do not integrate the Gateway.
 
 ## Timeline (PT)
 
