@@ -7,9 +7,10 @@ description: >
   keeps in a year. Also use it for landed cost, private-label or OEM equivalents,
   buy-price alerts, basket or annual procurement plans, and the savings ledger.
   Use it when they mention a professional buyer, household procurement, annual
-  savings, or a buying brief. This is not a coupon bot and not a sticker-price
+  savings, a buying brief, global or cross-border sourcing, delivery windows,
+  or consolidating orders. This is not a coupon bot and not a sticker-price
   comparison.
-version: "1.0"
+version: "1.1"
 ---
 
 # Professional household buyer
@@ -22,7 +23,7 @@ The north-star question:
 
 A valid answer is a local store today, a domestic retailer tomorrow, a warehouse club next month, a foreign distributor once a year, or **don't buy it**. No channel is preferred. The household's total economic value decides.
 
-The full doctrine is [references/specification.md](references/specification.md), version 1.0. Read it before a recommendation that is more than one landed-cost comparison. If this file and the specification disagree, the specification wins.
+The full doctrine is [references/specification.md](references/specification.md), version 1.1. Read it before a recommendation that is more than one landed-cost comparison. If this file and the specification disagree, the specification wins.
 
 Example dollar figures in the specification show the shape of an answer. Never copy them into a real dossier.
 
@@ -35,6 +36,29 @@ Maximize savings, quality, convenience, reliability, and preference satisfaction
 The number the work is built around:
 
 > How much money did the household keep this year because the buyer was watching?
+
+## Total delivered value
+
+This is a core pillar, not a footnote on price.
+
+Do not ask where the shelf price is lowest. Ask:
+
+> What is the best way for this household to acquire this item, considering price, shipping, taxes, duties, delivery time, scheduling, reliability, effort, and risk?
+
+Local stores, domestic online, cross-border, and alternative sourcing (used, refurbished, outlet, clearance, surplus, open-box, factory-direct) are one market. Do not assume the household's country is the best source.
+
+A low overseas shelf price is not the household's cost. Add origin shipping, international shipping, insurance, tax or VAT, duty, brokerage, currency conversion, payment fees, final-mile delivery, and the expected cost of a return. Then set beside that number, without adding them into it: delivery date, how precise the window is, reliability, tracking, return difficulty, warranty, counterfeit risk, voltage and region compatibility, documentation language, and regulatory limits. "Arrives sometime Tuesday" is a different offer from "Tuesday, 2–4 PM," and "ships in 3–5 days" is a different offer from a guaranteed Friday.
+
+The household can state a tradeoff, and that statement is a procurement rule:
+
+- "I will pay this much more to have it tomorrow."
+- "I will wait this long if the savings are large enough."
+
+Apply a dollar amount only when the household named it. Do not invent a procurement value score that adds minutes, risk, and dollars into one figure.
+
+Urgency changes the search, not the identity of the product. Emergency means today, so start local. Soon means within three days: local and domestic online. Planned means this month: domestic and international. Stock-up means a recurring item with no immediate need: global sourcing, bulk, and timing. A major purchase (appliance, furniture, electronics, vehicle) gets the full scan.
+
+Shipping can dominate a single unit. When it does, wait until several units or several items that share a supplier or a lane can ship together, and compare that effective unit cost with buying one at a time. Recurring goods from the same source (detergent, filters, supplements, coffee, blades, pet supplies, specialty foods) often belong on one cadence, not five separate orders.
 
 ## Run a case
 
@@ -51,6 +75,8 @@ Work the savings hierarchy in order and stop at the first level that meets the n
 9. **Monitor.** Recurring alerts, not a one-time tip.
 
 Then, as far as the case requires, run the research phases in the specification: household intake, need validation, identity and equivalence, baseline cost, global sourcing, landed cost, price history, stacking, ownership and risk, basket and consolidation, annual plan, monitoring.
+
+For a meaningful purchase, cover these research pillars before you recommend a source. Leave a pillar unknown rather than filling it in: identity, origin, manufacturer, OEM and private-label relationships, global suppliers, distribution, local availability, domestic online availability, international availability, price history, shipping economics, import economics, delivery, scheduling, returns and warranty, comparables, and the annual procurement opportunity.
 
 End when a stop condition is met and name it: sufficiently resolved, diminishing returns, evidence ceiling, identity unresolved, constraint blocked, or effort exceeded.
 

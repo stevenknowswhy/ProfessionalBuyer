@@ -1,6 +1,6 @@
 # Deep Research Skill: Professional Household Buyer for Annual Savings
 
-Version 1.0. Full skill specification.
+Version 1.1. Full skill specification.
 
 Dollar figures in the examples show the shape of an answer. They are not prices to reuse.
 
@@ -171,15 +171,34 @@ Product price
 = landed cost
 ```
 
-Score, and do not ignore: delivery time, delivery reliability, scheduling precision, tracking quality, return difficulty, warranty validity across borders, counterfeit risk, compatibility (voltage, region, format), language of documentation, and regulatory restrictions.
+The question is not where the shelf price is lowest. It is how this household should acquire the item once price, shipping, taxes, duties, delivery time, scheduling, reliability, effort, and risk are all in view.
 
-A low overseas shelf price can still land near a domestic price after shipping and duty. Sometimes the overseas option really is dramatically cheaper. Discover that too.
+Score, and do not add into the dollar total: delivery time, delivery reliability, scheduling precision, tracking quality, return difficulty, warranty validity across borders, counterfeit risk, compatibility (voltage, region, electrical standard, format), language of documentation, and regulatory restrictions.
+
+A household may state a real tradeoff: a maximum extra they will pay for faster or more precise delivery, or how long they will wait when the savings are large. Apply only the dollar amount they named. Do not invent a single procurement value score that adds time, convenience, and risk into the landed cost.
+
+Illustration only. These figures show the shape of a comparison. They are not prices to reuse.
+
+| Option | Item | Shipping | Tax or duty | Delivery | Scheduling | Effort | Landed cost |
+|---|---:|---:|---:|---|---|---|---:|
+| Local store | 42 | 0 | 4 | Today | Flexible | 20 min | 46 |
+| Domestic online | 35 | 0 | 3 | 2 days | Low | Very low | 38 |
+| Nearby country | 27 | 12 | 6 | 7 days | Medium | Medium | 45 |
+| Overseas | 22 | 15 | 8 | 10 days | Medium | Medium | 45 |
+| Overseas bulk | 18 | 20 | 7 | 14 days | Low | High | 45 |
+
+The 22 overseas shelf price is not a 22 product for this household. Sometimes the overseas option really is dramatically cheaper. Discover that too. Duty without a cited rate is "duty not included," not zero.
 
 ## 12. Delivery as a first-class variable
 
 Delivery quality is part of the procurement decision.
 
 Dimensions: estimated delivery date, window precision, scheduled delivery, appointment requirement, same-day through expedited, pickup or curbside or locker or in-home, signature requirement, tracking quality, and historical reliability of the carrier or seller.
+
+Treat these as different offers, not wording:
+
+- "Arrives sometime Tuesday" is not "Tuesday between 2 and 4 PM."
+- "Ships in 3–5 days" is not "guaranteed delivery Friday."
 
 | Urgency | Definition | Sourcing priority |
 |---|---|---|
@@ -193,7 +212,9 @@ Dimensions: estimated delivery date, window precision, scheduled delivery, appoi
 
 Optimize order quantity and shipment consolidation, not just unit price.
 
-When one unit's shipping dominates the price, a combined shipment of several units can change the effective unit cost. When several recurring items share a supplier, region, or shipping lane, one consolidated order can replace several separate orders. That cuts shipping, delivery events, household time, packaging, and transaction fees.
+When one unit's shipping dominates the price, a combined shipment of several units can change the effective unit cost. Illustration only: an item at 20 with 18 shipping is a poor single-unit buy. Six units at 120 plus 25 combined shipping is 145, or about 24.17 each, which can beat a domestic unit price of 35. Use the household's real quotes. Do not reuse these figures.
+
+When several recurring items share a supplier, region, or shipping lane, one consolidated order can replace several separate orders. Detergent, filters, supplements, coffee, blades, pet supplies, and specialty foods from the same source often belong on one cadence, such as a single order every six weeks, instead of five separate orders. That cuts shipping, delivery events, household time, packaging, and transaction fees.
 
 Recognize when the right move is to wait until several units are needed and combine the order.
 
@@ -262,7 +283,7 @@ Optimize the household basket, not only individual items. Group items by supplie
 
 ## 21. Cost of convenience and switching cost
 
-The household defines how much it will pay to avoid effort, by category.
+The household defines how much it will pay to avoid effort, by category. It can also state a speed premium ("I will pay this much more to have it tomorrow") and a wait tolerance ("I will wait this long if the savings are large enough"). Store both as procurement rules. They change which of the three answers wins. They are not a blended score.
 
 Switching is not free. If a cheaper product means a learning curve, new accessories, compatibility problems, unused inventory, lower quality, or a new subscription, compute the net switching benefit, not the sticker difference.
 
@@ -312,6 +333,28 @@ The household sees a brand and a price. The buyer sees the manufacturer, the par
 Identity resolution is the hidden engine. It prevents false comparisons and unlocks substitution savings. If a link in that chain is unknown, leave it unknown.
 
 ## 29. Research workflow
+
+For a meaningful purchase, cover these pillars. Leave a pillar unknown rather than filling it in.
+
+1. Identity
+2. Origin
+3. Manufacturer
+4. OEM and private-label relationships
+5. Global suppliers
+6. Distribution
+7. Local availability
+8. Domestic online availability
+9. International availability
+10. Price history
+11. Shipping economics
+12. Import economics
+13. Delivery
+14. Scheduling
+15. Returns and warranty
+16. Comparables
+17. Annual procurement opportunity
+
+Then run the phases:
 
 1. **Household intake.** Build or update the profile. One-off, recurring, or category-wide.
 2. **Need validation.** Apply the buy-at-all tree. Find repair, borrow, share, or substitute options.
