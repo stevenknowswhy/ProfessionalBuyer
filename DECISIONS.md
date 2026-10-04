@@ -106,3 +106,10 @@ Checked templates, skills and vendor docs before starting the agents. Changes:
 - **Design:** cream plus serif is a known AI-generated look; the brief now asks for a specific palette and token plan.
 - Vendored 16 official skills into `.claude/skills/` (pinned commits, licenses kept); AgentMail's unlicensed skill is
   installed at runtime instead. Added `AGENTS.md`, docs MCP servers in `.cursor/mcp.json`, and `.coderabbit.yaml`.
+
+## 2026-10-04 ~13:30 — No Neon AI Gateway
+
+The Neon project (professional-buyer, aws-us-east-2) is on a plan without the AI Gateway, and the
+owner confirmed we will not use it. All LLM calls go through a direct OpenAI-compatible key
+(OPENAI_API_KEY). Neon is still the database: Postgres, Mastra PostgresStore, and the shared bus
+between the agent server and the Sprite worker. The status page labels model calls "direct".

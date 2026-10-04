@@ -436,7 +436,7 @@ These change how we build. Each was checked against vendor docs or source today.
 
 | Area | Constraint | What we do |
 |---|---|---|
-| Neon AI Gateway | Needs a paid Neon plan with prepaid credits, and a project in `aws-us-east-1`, `aws-us-east-2`, `aws-eu-central-1` or `aws-ap-southeast-1`. Credential: `neon credentials create --scope ai_gateway:invoke` | Check plan and region first (human, now). Direct provider key is the labeled fallback |
+| Neon AI Gateway | Needs a paid plan we do not have | **Not used.** All LLM calls go through `OPENAI_API_KEY` directly, labeled "direct" in the status page. Neon still provides Postgres |
 | Mastra + assistant-ui | assistant-ui needs AI SDK v7; `chatRoute` defaults to v5 | `chatRoute({ path: '/chat/:agentId', version: 'v7' })`, all AI packages at `@latest` together |
 | Approval | Native v7 approval round-trip is not covered by Mastra's end-to-end tests | REST approval is the contract; native approval is a stretch |
 | Sprites | Paused Sprites drop TCP; a task keeps one awake for at most 1 hour per renewal | Service plus renewed task; no WebSocket on the Sprite |

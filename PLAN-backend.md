@@ -30,7 +30,7 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 - Ports: Mastra server 4111. Custom REST routes use `registerApiRoute` from `@mastra/core/server`. Chat: `chatRoute({ path: '/chat/:agentId', version: 'v7' })` from `@mastra/ai-sdk`, agent key `buyer`, so the URL is `/chat/buyer`. **`version: 'v7'` is required** (assistant-ui needs AI SDK v7; the default is v5). CORS on the Mastra `server.cors` option for `http://localhost:3000`.
 - Scaffold with `npx create-mastra@latest`, then install `@mastra/core @mastra/ai-sdk @mastra/pg @mastra/mcp ai` at `@latest` together.
 - **Read these skills before coding** (in `.claude/skills/`): `mastra`, `neon-postgres`, `neon-ai-gateway`, `build-with-exa`. The Mastra docs MCP server is configured in `.cursor/mcp.json`.
-- **Neon AI Gateway** needs a paid plan with prepaid credits and a supported region ([constraints](techStack.md#verified-constraints-checked-oct-4-1215-pm)). If `NEON_AI_GATEWAY_TOKEN` is missing or a call fails, use the direct provider key and mark Neon Gateway as fallback in `Health`. Do not spend more than 10 minutes on it.
+- **LLM calls go direct.** The Neon AI Gateway needs a paid plan we do not have, so use `OPENAI_API_KEY` (OpenAI-compatible, `OPENAI_BASE_URL` optional) for every model call and label it "direct" in `Health`. Do not integrate the Gateway.
 
 ## Timeline (PT)
 
