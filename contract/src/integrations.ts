@@ -15,6 +15,8 @@ export interface VerifiedOffer {
   inStock: boolean;
   kernelSessionId: string;
   replayUrl: string | null;
+  /** True when Kernel was not used (no key or call failed); the price was not verified. */
+  usingFallback?: boolean;
 }
 
 export interface CheckoutRequest {
@@ -33,6 +35,8 @@ export interface CheckoutResult {
   orderRef: string | null;
   replayUrl: string | null;
   failureReason: string | null;
+  /** True when Kernel was not configured and no browser was started. */
+  usingFallback?: boolean;
 }
 
 export interface Kernel {
@@ -53,12 +57,26 @@ export interface Mail {
   inboxAddress(): string;
   /** Starts the WebSocket listener (falls back to polling). Returns a stop function. */
   onInbound(handler: (email: InboundEmail) => Promise<void>, emit: EmitTrace): Promise<() => void>;
-  send(msg: { to: string; subject: string; text: string; html?: string }, emit: EmitTrace): Promise<{ messageId: string }>;
+  /** `usingFallback: true` means nothing was sent (AgentMail not configured); the message was only logged. */
+  send(
+    msg: { to: string; subject: string; text: string; html?: string },
+    emit: EmitTrace,
+  ): Promise<{ messageId: string; usingFallback?: boolean }>;
 }
 
 export interface Triage {
   /** Laya sidecar when healthy, LLM fallback otherwise. `via` says which ran. */
-  isReceipt(text: string, emit: EmitTrace): Promise<{ isReceipt: boolean; confidence: number; via: "laya" | "llm" }>;
+  isReceipt(
+    text: string,
+    emit: EmitTrace,
+  ): Promise<{
+    isReceipt: boolean;
+    confidence: number;
+    via: "laya" | "llm";
+    /** What actually ran. "heuristic" (keyword rules, no model) is a labeled last resort when neither Laya nor an LLM is available. */
+    method?: "laya" | "llm" | "heuristic";
+    usingFallback?: boolean;
+  }>;
 }
 
 export interface IntegrationHealth {

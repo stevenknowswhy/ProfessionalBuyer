@@ -22,9 +22,12 @@ Everyone may make **additive** changes to `contract/` following [CONTRACT.md](CO
 ## Hard rules
 
 - **Money:** every dollar figure comes from `contract/src/landed-cost.ts`. Never type a number into UI or copy. Money is integer cents.
-- **Spending:** the model has no tool that spends money. Spending happens only in `POST /api/approvals/:id/approve`, after cap, merchant allowlist and offer-hash checks. `CHECKOUT_MODE=review` unless the human says otherwise.
+- **No purchases.** The app never checks out and never calls Kernel. An offer is a price plus a URL. The UI shows that link.
+- **Demo data is the sample fixtures** in `contract/fixtures`, labeled Sample data. Do not block on live Exa.
+- **Receipt triage is Jev**, model `typesafe/jev-1.13`, `POST https://openrouter.ai/api/alpha/decisions`, using `OPENROUTER_API_KEY`. Not Laya, and not `typesafe/jev-router`.
+- **Chat LLM** is OpenAI `gpt-4o-mini` (`OPENAI_API_KEY`), with OpenRouter `openrouter/free` as the fallback.
 - **Honesty:** every external call has a fallback, and every fallback is labeled (`provenance`, `usingFallback`). Never show cached or sample data as live.
-- **Secrets:** names and sources are in [KEYS.md](KEYS.md) and [`.env.example`](.env.example). Never commit `.env` or keys. Payment details live in a Kernel Vault only. If a key is missing, use the fallback and say so in the PR description; do not stop.
+- **Secrets:** names and sources are in [KEYS.md](KEYS.md) and [`.env.example`](.env.example). Never commit `.env` or keys. If a key is missing, use the fallback and say so in the PR description; do not stop.
 - **Lockfile:** on a `pnpm-lock.yaml` conflict, take `main`'s version, run `pnpm install`, commit. Never hand-merge it.
 - **Versions:** install `ai`, `@ai-sdk/*`, `@assistant-ui/*`, `@mastra/*` at `@latest` together. Mastra `chatRoute` must use `version: 'v7'`. Do not copy code from examples written for `ai@5` or `ai@6`.
 
