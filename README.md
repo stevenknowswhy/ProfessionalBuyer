@@ -1,16 +1,15 @@
 # Personal Professional Buyer
 
+We were promised a utopia. This is part of it.
+
+The top 1% of households have professional buyers — dedicated concierges whose job is to save them money, raise quality, and give them time back. Everyone else overpays on autopilot.
+
+Our Personal Professional Buyer gives your household the same advantage. It learns what you buy and rebuy — by chat, voice, or mining your email receipts — then scans real-time prices across local, shipped, and cross-border channels, computing true landed cost and your projected yearly savings. With your tap-to-approve, it buys the cheapest option, runs price watches, and briefs you every morning.
+
+---
+
 Hackathon project for the **Build Personal Agents Hack** — Sun Oct 4, 2026, Terra Gallery, San Francisco.
-
-## The idea
-
-**One-liner:** The agent that finds what your household overpays for.
-
-A personal agent that learns your household's most-purchased items (by mining email receipts),
-scans real-time best prices across **local / shipped / long-haul-from-China** channels,
-and shows per-item + projected **yearly savings**. It doesn't just report — with your approval, it buys.
-
-Full concept: [CONCEPT.md](CONCEPT.md)
+Submissions close **4:30 PM PT**. Top-6 demos: 2 min + 1 min Q&A.
 
 ## Why this idea
 
@@ -20,6 +19,18 @@ Full concept: [CONCEPT.md](CONCEPT.md)
 - A projected **yearly savings number** is the most memorable artifact a demo can produce.
 
 See [STRATEGY.md](STRATEGY.md) and [INFLUENCE.md](INFLUENCE.md).
+
+## How it works
+
+1. **Learn what you buy.** The agent mines email receipts (its own AgentMail inbox) and builds your
+   household purchase graph: items, brands, quantities, cadence, current sources.
+2. **Scan the world.** Real-time best prices across **local** (store pickup), **shipped** (US e-commerce),
+   **long-haul** (China / cross-border). Landed cost = item + shipping + estimated duties/taxes.
+3. **Show the money.** Per-item savings + projected **yearly savings** if you switched channels.
+4. **Act, don't just report.** With human-in-the-loop approval: buy the cheapest valid option,
+   set price watches, get a daily briefing email of new savings.
+
+Full concept: [CONCEPT.md](CONCEPT.md) · Build scope: [MVP.md](MVP.md)
 
 ## Files
 
