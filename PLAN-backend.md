@@ -6,6 +6,10 @@ Counterparts, running in parallel: [PLAN-frontend.md](PLAN-frontend.md) (UI) and
 
 ## Mission
 
+## Scope lock
+
+The app does not buy anything. Do not call Kernel and do not implement checkout. `proposePurchase` is not a purchase: return the best offer and its URL. Serve `contract/fixtures` as the demo data and label them sample. Receipt triage, when you add it, calls Jev at `typesafe/jev-1.13` on `https://openrouter.ai/api/alpha/decisions` with `OPENROUTER_API_KEY`. Chat uses OpenAI `gpt-4o-mini`, falling back to OpenRouter `openrouter/free`. `agent/` already has a Mastra server stub. Finish it, do not rewrite it from scratch.
+
 Make the REST and chat contract **real**: the Mastra server, Neon, the receipt-to-number pipeline (ingest, Exa scan, landed cost, the yearly number), the agent and its tools, Executor, and the approval gate. You are the hub: the frontend calls you, and you call the integrations package.
 
 ## Owns

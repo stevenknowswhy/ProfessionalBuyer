@@ -6,6 +6,10 @@ Counterparts, running in parallel: [PLAN-backend.md](PLAN-backend.md) (core API)
 
 ## Mission
 
+## Scope lock
+
+Build against `contract/fixtures`. Every screen that is not live shows a Sample data badge. There is no checkout and no Kernel live view. The offer card has a link to the product URL, labeled so a person can open it and buy it themselves. Do not add an Approve button that spends money. `web/` already has a shell from an earlier pass. Continue from that. Keep the concierge ledger look.
+
 Build the interface so that it looks like an Awwwards submission and carries the demo. It is our **Best UI** entry: a concierge's private ledger, calm and precise, not an AI dashboard. The whole demo runs on one screen.
 
 ## Owns

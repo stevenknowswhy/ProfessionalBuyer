@@ -6,6 +6,10 @@ Counterparts, running in parallel: [PLAN-backend.md](PLAN-backend.md) (core) and
 
 ## Mission
 
+## Scope lock
+
+Do not build Kernel checkout, live view, or a Vault payment. The product only stores an offer URL. Your jobs are AgentMail (inbox `signal-os-concierge@agentmail.to`) and the Sprite worker `buyer-worker` (org `stefano94120`, URL https://buyer-worker-b3y4b.sprites.app), which is already created. Replace Laya triage with Jev: `typesafe/jev-1.13` via `POST https://openrouter.ai/api/alpha/decisions` and `OPENROUTER_API_KEY`. Code already exists on this branch for a Kernel client and a Laya client. Leave the Kernel client unused and switch triage to Jev.
+
 Own the four integrations that are slow, flaky, and need their own trial and error, so they do not stall the core pipeline:
 
 - **Kernel:** read-only offer verification and approval-gated checkout with live view, Vault payment and replays.
