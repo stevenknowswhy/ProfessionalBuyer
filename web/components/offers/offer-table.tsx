@@ -29,11 +29,14 @@ export function OfferTable({
   item,
   source,
   className,
+  outsideStore,
 }: {
   savings: ItemSavings;
   item?: Item;
   source?: DataSource;
   className?: string;
+  /** True when this retailer is a known store the household has not added. */
+  outsideStore?: (retailer: string) => boolean;
 }) {
   const unit = item?.unit ?? "unit";
   const ranked = savings.offers.filter((o) => !o.excludedReason);
@@ -88,6 +91,7 @@ export function OfferTable({
                     {!offer.inStock && <span className="text-micro font-semibold text-carmine">Out of stock</span>}
                   </p>
                   <p className="text-ink-soft">{offer.title}</p>
+                  {outsideStore?.(offer.retailer) && <p className="text-micro font-semibold text-ink-soft">Outside your stores</p>}
                 </td>
                 <td className="px-3 py-2.5 text-ink-soft">{CHANNEL_NAMES[offer.channel]}</td>
                 <td className="money px-3 py-2.5 text-right text-ink">

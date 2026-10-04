@@ -6,6 +6,7 @@ import { DataError, EmptyState, RowsSkeleton } from "@/components/data-state";
 import { HouseholdLedger } from "@/components/ledger/household-ledger";
 import { ProvenanceBadge } from "@/components/provenance";
 import { SavingsDesk } from "@/components/savings/savings-desk";
+import { StoreBoard } from "@/components/stores/store-board";
 import { SavingsSummarySkeleton } from "@/components/savings/savings-summary";
 import { SubSection, Zone } from "@/components/shell/zone";
 import { TopBar } from "@/components/shell/top-bar";
@@ -14,6 +15,9 @@ import { WatchList } from "@/components/watch/watch-list";
 import { DATA_SOURCE } from "@/lib/api";
 import { plural } from "@/lib/format";
 import { useActions, useApprovals, useHealth, useHousehold, useSavingsLatest, useTraceStream, useWatches } from "@/lib/hooks";
+import { chosenStores } from "@/lib/stores";
+import { useStoreSelection } from "@/lib/use-stores";
+import { useState } from "react";
 
 export function BuyerApp() {
   const household = useHousehold();
@@ -23,13 +27,34 @@ export function BuyerApp() {
   const watches = useWatches();
   const trace = useTraceStream();
   const { approve, decline } = useActions();
+  const stores = useStoreSelection();
+  const [storesOpen, setStoresOpen] = useState(false);
+  const storeCount = chosenStores(stores.selection).length;
 
   const open = approvals.data?.filter((a) => a.status !== "declined") ?? [];
 
   return (
     <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] bg-paper">
-      <TopBar household={household.data} health={health.data} source={DATA_SOURCE} />
+      <TopBar
+        household={household.data}
+        health={health.data}
+        source={DATA_SOURCE}
+        storeCount={storeCount}
+        storesOpen={storesOpen}
+        onStores={() => setStoresOpen((open) => !open)}
+      />
 
+      {storesOpen ? (
+        <main className="min-h-0 overflow-y-auto">
+          <StoreBoard
+            selection={stores.selection}
+            onToggle={stores.toggle}
+            onAddLink={stores.addLink}
+            onRemoveCustom={stores.removeCustom}
+            onClose={() => setStoresOpen(false)}
+          />
+        </main>
+      ) : (
       <main className="grid min-h-0 grid-cols-1 xl:grid-cols-[20rem_minmax(0,1fr)_25rem] 2xl:grid-cols-[22rem_minmax(0,1fr)_28rem]">
         <Zone
           title="Household"
@@ -63,7 +88,13 @@ export function BuyerApp() {
                 body="Ask the buyer to scan your receipts. It reads them, prices every item across local, shipped and long-haul channels, and shows its working."
               />
             ) : (
-              <SavingsDesk household={household.data} savings={savings.data} source={DATA_SOURCE} />
+              <SavingsDesk
+                household={household.data}
+                savings={savings.data}
+                source={DATA_SOURCE}
+                stores={stores.selection}
+                onEditStores={() => setStoresOpen(true)}
+              />
             )}
             <ComposerPreview />
           </div>
@@ -100,6 +131,7 @@ export function BuyerApp() {
           </SubSection>
         </Zone>
       </main>
+      )}
     </div>
   );
 }

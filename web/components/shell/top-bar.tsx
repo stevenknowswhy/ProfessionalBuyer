@@ -16,10 +16,16 @@ export function TopBar({
   household,
   health,
   source,
+  storeCount,
+  storesOpen,
+  onStores,
 }: {
   household?: Household;
   health?: Health;
   source: DataSource;
+  storeCount?: number;
+  storesOpen?: boolean;
+  onStores?: () => void;
 }) {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-6 border-b border-rule px-6">
@@ -28,7 +34,20 @@ export function TopBar({
         <span className="hidden text-small text-ink-soft lg:inline">Your household&apos;s professional buyer</span>
       </div>
       <div className="flex items-center gap-2">
-        {household && <span className="text-small font-semibold text-ink">{household.name}</span>}
+        {onStores && (
+          <button
+            type="button"
+            onClick={onStores}
+            aria-pressed={storesOpen}
+            className="pressable inline-flex min-h-10 items-center gap-2 rounded-chip bg-ink px-3 text-small font-semibold text-paper-raised"
+          >
+            {storesOpen ? "Ledger" : "Stores"}
+            {!storesOpen && typeof storeCount === "number" && (
+              <span className="text-micro font-medium text-paper-raised/80">{storeCount}</span>
+            )}
+          </button>
+        )}
+        {household && <span className="hidden text-small font-semibold text-ink sm:inline">{household.name}</span>}
         {household?.isDemoHousehold && <Tag label="Demo household" />}
         <ProvenanceBadge source={source} />
         {health && (
