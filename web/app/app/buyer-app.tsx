@@ -1,27 +1,30 @@
 "use client";
 
-import { Camera, LayoutGrid, Store } from "lucide-react";
+import { Camera, House, LayoutGrid, Store } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { CaptureReceipt } from "@/components/phone/capture-receipt";
 import { CompareMatrix } from "@/components/phone/compare-matrix";
+import { HomeScreen } from "@/components/phone/home-screen";
 import { Onboarding } from "@/components/phone/onboarding";
 import { SettingsScreen } from "@/components/phone/settings-screen";
 import { Wordmark } from "@/components/shell/top-bar";
 import { StoreBoard } from "@/components/stores/store-board";
 import { useHousehold } from "@/lib/hooks";
+import { useMockSavings } from "@/lib/use-mock-savings";
 import { useProfile } from "@/lib/use-profile";
 import type { ReceiptLine } from "@/lib/receipt";
 import { chosenStores } from "@/lib/stores";
 import { useStoreSelection } from "@/lib/use-stores";
 import { cn } from "@/lib/utils";
 
-type Tab = "receipt" | "compare" | "stores";
+type Tab = "home" | "receipt" | "compare" | "stores";
 
 export function BuyerApp() {
   const household = useHousehold();
   const profileState = useProfile();
+  const mockSavings = useMockSavings();
   const stores = useStoreSelection();
-  const [tab, setTab] = useState<Tab>("receipt");
+  const [tab, setTab] = useState<Tab>("home");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [line, setLine] = useState<ReceiptLine | null>(null);
   const [retailer, setRetailer] = useState("");
@@ -75,8 +78,16 @@ export function BuyerApp() {
 
       <main className="phone-main flex w-full min-w-0 flex-1 flex-col px-4 pt-5">
         {settingsOpen ? (
-          <SettingsScreen profile={profileState.profile} onSave={profileState.save} />
+          <SettingsScreen
+            profile={profileState.profile}
+            onSave={profileState.save}
+            mockCleared={mockSavings.cleared}
+            onClearMock={mockSavings.clear}
+          />
         ) : null}
+        {!settingsOpen && tab === "home" && (
+          <HomeScreen cleared={mockSavings.cleared} onReceipt={() => setTab("receipt")} />
+        )}
         {!settingsOpen && tab === "receipt" && (
           <CaptureReceipt
             household={household.data}
@@ -116,7 +127,8 @@ export function BuyerApp() {
       </main>
 
       <nav aria-label="Sections" className="phone-tabs fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-paper-raised">
-        <div className="mx-auto grid w-full max-w-3xl grid-cols-3">
+        <div className="mx-auto grid w-full max-w-3xl grid-cols-4">
+          <TabButton current={settingsOpen ? null : tab} id="home" label="Home" icon={<House aria-hidden className="size-5" />} onSelect={selectTab} />
           <TabButton current={settingsOpen ? null : tab} id="receipt" label="Receipt" icon={<Camera aria-hidden className="size-5" />} onSelect={selectTab} />
           <TabButton current={settingsOpen ? null : tab} id="compare" label="Compare" icon={<LayoutGrid aria-hidden className="size-5" />} onSelect={selectTab} />
           <TabButton current={settingsOpen ? null : tab} id="stores" label="Stores" icon={<Store aria-hidden className="size-5" />} onSelect={selectTab} />

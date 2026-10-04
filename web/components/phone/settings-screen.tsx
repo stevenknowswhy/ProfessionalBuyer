@@ -1,15 +1,21 @@
 "use client";
 
+import { formatUsd } from "@buyer/contract";
 import { useState } from "react";
 import { AddressFields, InternationalChoices, ShoppingChoices } from "@/components/phone/profile-fields";
+import { MOCK_SAVINGS } from "@/lib/mock-savings";
 import { INTERNATIONAL_QUESTION, profileErrors, type HouseholdProfile, type ProfileField } from "@/lib/profile";
 
 export function SettingsScreen({
   profile,
   onSave,
+  mockCleared,
+  onClearMock,
 }: {
   profile: HouseholdProfile;
   onSave: (profile: HouseholdProfile) => void;
+  mockCleared: boolean;
+  onClearMock: () => void;
 }) {
   const [draft, setDraft] = useState(profile);
   const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>({});
@@ -75,6 +81,28 @@ export function SettingsScreen({
           Profile saved.
         </p>
       )}
+
+      <section className="flex flex-col gap-3 border-t border-rule pt-6">
+        <h2 className="text-body font-semibold text-ink">Mock data</h2>
+        {mockCleared ? (
+          <p className="text-body text-ink-soft">Mock data is cleared. The home screen is waiting for real savings.</p>
+        ) : (
+          <>
+            <p className="text-body text-ink-soft">
+              The home screen is showing sample savings: {formatUsd(MOCK_SAVINGS.monthCents)} this month on{" "}
+              {MOCK_SAVINGS.monthItems} items, and {formatUsd(MOCK_SAVINGS.yearCents)} this year on {MOCK_SAVINGS.yearItems}{" "}
+              items.
+            </p>
+            <button
+              type="button"
+              onClick={onClearMock}
+              className="pressable min-h-12 w-full rounded-chip border border-rule bg-paper px-4 text-small font-semibold text-ink"
+            >
+              Clear mock data
+            </button>
+          </>
+        )}
+      </section>
     </div>
   );
 }
