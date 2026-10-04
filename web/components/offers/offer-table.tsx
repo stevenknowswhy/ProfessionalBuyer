@@ -1,9 +1,28 @@
-import type { Item, ItemSavings } from "@buyer/contract";
-import { BadgeCheck } from "lucide-react";
+import { formatUsd, type Item, type ItemSavings, type Offer } from "@buyer/contract";
+import { BadgeCheck, ExternalLink } from "lucide-react";
 import { ProvenanceBadge } from "@/components/provenance";
 import type { DataSource } from "@/lib/api";
-import { CHANNEL_NAMES, formatUnitCents, formatUsd } from "@/lib/format";
+import { CHANNEL_NAMES, formatUnitCents } from "@/lib/format";
 import { cn } from "@/lib/utils";
+
+function ProductLink({ offer }: { offer: Offer }) {
+  if (!offer.url) return null;
+  return (
+    <a
+      href={offer.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex min-h-10 items-center gap-1.5 font-semibold text-ink underline-offset-4 hover:underline"
+    >
+      Open the product
+      <ExternalLink aria-hidden className="size-3.5" />
+      <span className="sr-only">
+        {" "}
+        at {offer.retailer}, in a new tab
+      </span>
+    </a>
+  );
+}
 
 export function OfferTable({
   savings,
@@ -22,7 +41,7 @@ export function OfferTable({
   const provenance = savings.offers.find((o) => o.provenance !== "live")?.provenance ?? savings.offers[0]?.provenance;
 
   return (
-    <article className={cn("surface flex flex-col overflow-hidden", className)}>
+    <article id={`offers-${savings.itemId}`} className={cn("surface flex flex-col overflow-hidden scroll-mt-4", className)}>
       <header className="flex items-start justify-between gap-4 p-5 pb-4">
         <div className="flex flex-col gap-1">
           <h3 className="type-heading text-[1.25rem] text-ink">{item?.name ?? savings.itemId}</h3>
@@ -48,7 +67,8 @@ export function OfferTable({
             <th scope="col" className="py-2 pr-3 pl-5 font-semibold">Offer</th>
             <th scope="col" className="px-3 py-2 font-semibold">Channel</th>
             <th scope="col" className="px-3 py-2 text-right font-semibold">Delivered</th>
-            <th scope="col" className="py-2 pr-5 pl-3 text-right font-semibold">Per {unit}</th>
+            <th scope="col" className="px-3 py-2 text-right font-semibold">Per {unit}</th>
+            <th scope="col" className="py-2 pr-5 pl-3 text-left font-semibold">Product</th>
           </tr>
         </thead>
         <tbody>
@@ -80,8 +100,11 @@ export function OfferTable({
                     </span>
                   )}
                 </td>
-                <td className={cn("money py-2.5 pr-5 pl-3 text-right", best ? "font-semibold text-margin" : "text-ink")}>
+                <td className={cn("money px-3 py-2.5 text-right", best ? "font-semibold text-margin" : "text-ink")}>
                   {formatUnitCents(offer.unitCostCents)}
+                </td>
+                <td className="py-1 pr-5 pl-3 text-small">
+                  <ProductLink offer={offer} />
                 </td>
               </tr>
             );
@@ -93,19 +116,26 @@ export function OfferTable({
                 <p>{offer.title}</p>
               </td>
               <td className="px-3 py-2.5">{CHANNEL_NAMES[offer.channel]}</td>
-              <td colSpan={2} className="py-2.5 pr-5 pl-3 text-right text-ink-soft">
+              <td colSpan={2} className="px-3 py-2.5 text-right text-ink-soft">
                 Not ranked: {offer.excludedReason}
+              </td>
+              <td className="py-1 pr-5 pl-3 text-small">
+                <ProductLink offer={offer} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {savings.history.enough === false && (
-        <p className="border-t border-rule/60 px-5 py-3 text-small text-ink-soft">
-          <span className="font-semibold text-ink">Left out of the total.</span> {savings.history.reason}
-        </p>
-      )}
+      <p className="border-t border-rule/60 px-5 py-3 text-small text-ink-soft">
+        Open the product to buy it on the retailer&apos;s site.
+        {savings.history.enough === false && (
+          <>
+            {" "}
+            <span className="font-semibold text-ink">Left out of the total.</span> {savings.history.reason}
+          </>
+        )}
+      </p>
     </article>
   );
 }

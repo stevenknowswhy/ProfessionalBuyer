@@ -42,7 +42,25 @@ export function HouseholdLedger({
               className="enter group grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 border-b border-rule/70 py-3.5 last:border-b-0"
               style={{ "--i": i } as React.CSSProperties}
             >
-              <p className="text-body font-semibold text-ink">{item.name}</p>
+              <p className="text-body font-semibold text-ink">
+                {s ? (
+                  <a
+                    href={`#offers-${item.id}`}
+                    className="underline-offset-4 hover:underline"
+                    onClick={(event) => {
+                      const target = document.getElementById(`offers-${item.id}`);
+                      if (!target) return;
+                      event.preventDefault();
+                      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                      target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+                    }}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  item.name
+                )}
+              </p>
               <p className="money text-right text-body text-ink">{last ? formatUsd(last.lineTotalCents) : ""}</p>
               <p className="text-small text-ink-soft">
                 {plural(purchases.length, "buy")}

@@ -197,6 +197,21 @@
     line-height: 0.9;
   }
 
+  number-flow.type-number {
+    font-family: var(--font-display);
+    font-variation-settings: "opsz" 96;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: inherit;
+  }
+
+  number-flow.type-number::part(number),
+  number-flow.type-number::part(left),
+  number-flow.type-number::part(right) {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
   .type-display {
     font-family: var(--font-display);
     font-variation-settings: "opsz" 48;

@@ -1,10 +1,11 @@
 "use client";
 
 import { ApprovalCard } from "@/components/approval/approval-card";
-import { ComposerPreview, ConversationPreview } from "@/components/conversation/conversation-preview";
+import { ComposerPreview } from "@/components/conversation/conversation-preview";
 import { DataError, EmptyState, RowsSkeleton } from "@/components/data-state";
 import { HouseholdLedger } from "@/components/ledger/household-ledger";
 import { ProvenanceBadge } from "@/components/provenance";
+import { SavingsDesk } from "@/components/savings/savings-desk";
 import { SavingsSummarySkeleton } from "@/components/savings/savings-summary";
 import { SubSection, Zone } from "@/components/shell/zone";
 import { TopBar } from "@/components/shell/top-bar";
@@ -62,7 +63,7 @@ export function BuyerApp() {
                 body="Ask the buyer to scan your receipts. It reads them, prices every item across local, shipped and long-haul channels, and shows its working."
               />
             ) : (
-              <ConversationPreview household={household.data} savings={savings.data} source={DATA_SOURCE} />
+              <SavingsDesk household={household.data} savings={savings.data} source={DATA_SOURCE} />
             )}
           </div>
           <div className="sticky bottom-0 bg-gradient-to-t from-paper from-70% to-transparent pt-6 pb-5">

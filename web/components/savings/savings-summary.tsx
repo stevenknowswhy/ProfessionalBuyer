@@ -1,8 +1,9 @@
 import type { SavingsRun } from "@buyer/contract";
 import { ProvenanceBadge } from "@/components/provenance";
+import { YearlySavingsNumber } from "@/components/savings/yearly-number";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DataSource } from "@/lib/api";
-import { formatUsd, plural } from "@/lib/format";
+import { plural } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /** One-line provenance under the Number, built only from SavingsRun.inputs. */
@@ -15,16 +16,21 @@ export function SavingsSummary({
   run,
   source,
   className,
+  prominent = false,
 }: {
   run: SavingsRun;
   source?: DataSource;
   className?: string;
+  /** Sits on the ledger paper, sized as the center of the screen. */
+  prominent?: boolean;
 }) {
   const { includedItemCount, itemCount } = run.inputs;
   return (
-    <article className={cn("surface relative flex flex-col gap-4 overflow-hidden p-5", className)}>
+    <article className={cn(prominent ? "flex flex-col gap-4" : "surface relative flex flex-col gap-4 overflow-hidden p-5", className)}>
       <header className="flex items-start justify-between gap-3">
-        <h3 className="text-small font-semibold text-ink-soft">Found in your receipts</h3>
+        <h3 className={cn("text-ink-soft", prominent ? "type-heading text-[1.35rem] text-ink" : "text-small font-semibold")}>
+          {prominent ? "Saved in a year" : "Found in your receipts"}
+        </h3>
         <ProvenanceBadge provenance={run.provenance} source={source} />
       </header>
 
@@ -36,12 +42,15 @@ export function SavingsSummary({
       ) : run.status === "error" ? (
         <p className="text-body text-carmine">This run stopped before it finished. Run the scan again.</p>
       ) : (
-        <div className="flex flex-col gap-1">
-          <p className="flex items-baseline gap-3 text-margin">
-            <span className="type-number text-[4.5rem]">{formatUsd(run.yearlySavingsCents)}</span>
+        <div className="flex flex-col gap-2">
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-margin">
+            <YearlySavingsNumber
+              cents={run.yearlySavingsCents}
+              className={prominent ? "text-[clamp(4.25rem,16cqi,7.75rem)]" : "text-[4.5rem]"}
+            />
             <span className="text-body font-semibold">a year</span>
           </p>
-          <p className="text-body text-ink">From {savingsProvenance(run)}.</p>
+          <p className="max-w-[40ch] text-body text-ink">From {savingsProvenance(run)}.</p>
         </div>
       )}
 

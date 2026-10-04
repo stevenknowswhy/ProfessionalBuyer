@@ -68,7 +68,7 @@ export function ConversationPreview({
   );
 }
 
-const SUGGESTIONS = ["Scan my receipts", "Buy the cheapest", "What are you watching?"];
+const SUGGESTIONS = ["Scan my receipts", "Show the biggest saving", "What are you watching?"];
 
 export function ComposerPreview() {
   return (
@@ -88,7 +88,7 @@ export function ComposerPreview() {
           id="composer-preview"
           rows={1}
           disabled
-          placeholder="Ask your buyer to find, compare or buy something"
+          placeholder="Ask about a receipt or an offer"
           className="min-h-10 flex-1 resize-none bg-transparent py-2 text-body text-ink placeholder:text-ink-faint focus:outline-none disabled:cursor-not-allowed"
         />
         <Button size="icon" disabled aria-label="Send">
