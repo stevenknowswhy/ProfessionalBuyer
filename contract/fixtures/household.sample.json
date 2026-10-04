@@ -1,0 +1,514 @@
+{
+  "name": "Demo household",
+  "isDemoHousehold": true,
+  "receipts": [
+    {
+      "id": "r01",
+      "source": "seed",
+      "retailer": "Amazon",
+      "receivedAt": "2026-08-03T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 5595
+    },
+    {
+      "id": "r02",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-08-05T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4248
+    },
+    {
+      "id": "r03",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-08-12T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4258
+    },
+    {
+      "id": "r04",
+      "source": "seed",
+      "retailer": "Costco",
+      "receivedAt": "2026-08-16T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4598
+    },
+    {
+      "id": "r05",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-08-19T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4348
+    },
+    {
+      "id": "r06",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-08-26T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4278
+    },
+    {
+      "id": "r07",
+      "source": "seed",
+      "retailer": "Amazon",
+      "receivedAt": "2026-08-30T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 3848
+    },
+    {
+      "id": "r08",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-09-02T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4258
+    },
+    {
+      "id": "r09",
+      "source": "seed",
+      "retailer": "Costco",
+      "receivedAt": "2026-09-06T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 2399
+    },
+    {
+      "id": "r10",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-09-09T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4388
+    },
+    {
+      "id": "r11",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-09-16T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4248
+    },
+    {
+      "id": "r12",
+      "source": "seed",
+      "retailer": "Costco",
+      "receivedAt": "2026-09-20T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4648
+    },
+    {
+      "id": "r13",
+      "source": "seed",
+      "retailer": "GroceryCo",
+      "receivedAt": "2026-09-23T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 4268
+    },
+    {
+      "id": "r14",
+      "source": "seed",
+      "retailer": "Amazon",
+      "receivedAt": "2026-09-27T15:00:00.000Z",
+      "triage": {
+        "isReceipt": true,
+        "via": "laya",
+        "confidence": 0.97
+      },
+      "reconciled": true,
+      "totalCents": 3196
+    }
+  ],
+  "items": [
+    {
+      "id": "paper-towels",
+      "name": "Paper towels",
+      "brand": null,
+      "brandStrictness": "equivalent",
+      "unit": "sheet"
+    },
+    {
+      "id": "toilet-paper",
+      "name": "Toilet paper",
+      "brand": null,
+      "brandStrictness": "equivalent",
+      "unit": "sheet"
+    },
+    {
+      "id": "diapers",
+      "name": "Diapers (size 4)",
+      "brand": null,
+      "brandStrictness": "equivalent",
+      "unit": "diaper"
+    },
+    {
+      "id": "eggs",
+      "name": "Eggs",
+      "brand": null,
+      "brandStrictness": "equivalent",
+      "unit": "egg"
+    },
+    {
+      "id": "dish-soap",
+      "name": "Dish soap",
+      "brand": null,
+      "brandStrictness": "equivalent",
+      "unit": "oz"
+    },
+    {
+      "id": "batteries",
+      "name": "AA batteries",
+      "brand": "Duracell",
+      "brandStrictness": "exact",
+      "unit": "battery"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "r01-1",
+      "itemId": "paper-towels",
+      "receiptId": "r01",
+      "retailer": "Amazon",
+      "date": "2026-08-03T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 1560,
+      "lineTotalCents": 2499
+    },
+    {
+      "id": "r01-2",
+      "itemId": "dish-soap",
+      "receiptId": "r01",
+      "retailer": "Amazon",
+      "date": "2026-08-03T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 75,
+      "lineTotalCents": 1197
+    },
+    {
+      "id": "r01-3",
+      "itemId": "batteries",
+      "receiptId": "r01",
+      "retailer": "Amazon",
+      "date": "2026-08-03T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 48,
+      "lineTotalCents": 1899
+    },
+    {
+      "id": "r02-1",
+      "itemId": "eggs",
+      "receiptId": "r02",
+      "retailer": "GroceryCo",
+      "date": "2026-08-05T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 749
+    },
+    {
+      "id": "r02-2",
+      "itemId": "diapers",
+      "receiptId": "r02",
+      "retailer": "GroceryCo",
+      "date": "2026-08-05T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r03-1",
+      "itemId": "eggs",
+      "receiptId": "r03",
+      "retailer": "GroceryCo",
+      "date": "2026-08-12T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 759
+    },
+    {
+      "id": "r03-2",
+      "itemId": "diapers",
+      "receiptId": "r03",
+      "retailer": "GroceryCo",
+      "date": "2026-08-12T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r04-1",
+      "itemId": "toilet-paper",
+      "receiptId": "r04",
+      "retailer": "Costco",
+      "date": "2026-08-16T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 11400,
+      "lineTotalCents": 2399
+    },
+    {
+      "id": "r04-2",
+      "itemId": "paper-towels",
+      "receiptId": "r04",
+      "retailer": "Costco",
+      "date": "2026-08-16T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 1920,
+      "lineTotalCents": 2199
+    },
+    {
+      "id": "r05-1",
+      "itemId": "eggs",
+      "receiptId": "r05",
+      "retailer": "GroceryCo",
+      "date": "2026-08-19T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 749
+    },
+    {
+      "id": "r05-2",
+      "itemId": "diapers",
+      "receiptId": "r05",
+      "retailer": "GroceryCo",
+      "date": "2026-08-19T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3599
+    },
+    {
+      "id": "r06-1",
+      "itemId": "eggs",
+      "receiptId": "r06",
+      "retailer": "GroceryCo",
+      "date": "2026-08-26T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 779
+    },
+    {
+      "id": "r06-2",
+      "itemId": "diapers",
+      "receiptId": "r06",
+      "retailer": "GroceryCo",
+      "date": "2026-08-26T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r07-1",
+      "itemId": "dish-soap",
+      "receiptId": "r07",
+      "retailer": "Amazon",
+      "date": "2026-08-30T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 75,
+      "lineTotalCents": 1249
+    },
+    {
+      "id": "r07-2",
+      "itemId": "paper-towels",
+      "receiptId": "r07",
+      "retailer": "Amazon",
+      "date": "2026-08-30T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 1560,
+      "lineTotalCents": 2599
+    },
+    {
+      "id": "r08-1",
+      "itemId": "eggs",
+      "receiptId": "r08",
+      "retailer": "GroceryCo",
+      "date": "2026-09-02T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 759
+    },
+    {
+      "id": "r08-2",
+      "itemId": "diapers",
+      "receiptId": "r08",
+      "retailer": "GroceryCo",
+      "date": "2026-09-02T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r09-1",
+      "itemId": "toilet-paper",
+      "receiptId": "r09",
+      "retailer": "Costco",
+      "date": "2026-09-06T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 11400,
+      "lineTotalCents": 2399
+    },
+    {
+      "id": "r10-1",
+      "itemId": "eggs",
+      "receiptId": "r10",
+      "retailer": "GroceryCo",
+      "date": "2026-09-09T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 789
+    },
+    {
+      "id": "r10-2",
+      "itemId": "diapers",
+      "receiptId": "r10",
+      "retailer": "GroceryCo",
+      "date": "2026-09-09T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3599
+    },
+    {
+      "id": "r11-1",
+      "itemId": "eggs",
+      "receiptId": "r11",
+      "retailer": "GroceryCo",
+      "date": "2026-09-16T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 749
+    },
+    {
+      "id": "r11-2",
+      "itemId": "diapers",
+      "receiptId": "r11",
+      "retailer": "GroceryCo",
+      "date": "2026-09-16T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r12-1",
+      "itemId": "toilet-paper",
+      "receiptId": "r12",
+      "retailer": "Costco",
+      "date": "2026-09-20T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 11400,
+      "lineTotalCents": 2449
+    },
+    {
+      "id": "r12-2",
+      "itemId": "paper-towels",
+      "receiptId": "r12",
+      "retailer": "Costco",
+      "date": "2026-09-20T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 1920,
+      "lineTotalCents": 2199
+    },
+    {
+      "id": "r13-1",
+      "itemId": "eggs",
+      "receiptId": "r13",
+      "retailer": "GroceryCo",
+      "date": "2026-09-23T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 18,
+      "lineTotalCents": 769
+    },
+    {
+      "id": "r13-2",
+      "itemId": "diapers",
+      "receiptId": "r13",
+      "retailer": "GroceryCo",
+      "date": "2026-09-23T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 92,
+      "lineTotalCents": 3499
+    },
+    {
+      "id": "r14-1",
+      "itemId": "dish-soap",
+      "receiptId": "r14",
+      "retailer": "Amazon",
+      "date": "2026-09-27T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 75,
+      "lineTotalCents": 1297
+    },
+    {
+      "id": "r14-2",
+      "itemId": "batteries",
+      "receiptId": "r14",
+      "retailer": "Amazon",
+      "date": "2026-09-27T15:00:00.000Z",
+      "quantity": 1,
+      "normalizedUnits": 48,
+      "lineTotalCents": 1899
+    }
+  ]
+}

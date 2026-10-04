@@ -37,6 +37,7 @@ cp .env.example .env   # fill in keys (see above)
 
 ```text
 .
+├── contract/         # Shared schemas, landed-cost math, sample fixtures (pnpm contract:check)
 ├── agent/            # Mastra server: tools, workflows, memory, landed-cost code (TODO)
 ├── web/              # Next.js: assistant-ui chat, savings dashboard, trace panel (TODO)
 ├── worker/           # Price watches + daily briefing; runs locally or on a Fly Sprite (TODO)
@@ -44,6 +45,9 @@ cp .env.example .env   # fill in keys (see above)
 ├── db/schema.sql     # Plain SQL schema for Neon (TODO)
 ├── seed/             # Fixture receipts for the demo
 ├── PLAN.md           # Build plan, schedule, risks
+├── PLAN-frontend.md  # Frontend agent plan
+├── PLAN-backend.md   # Backend agent plan
+├── CONTRACT.md       # Interface between the two
 ├── techStack.md      # Sponsor-by-sponsor use cases and wiring
 ├── .claude/skills/   # Versioned agent skills (laya-integration)
 └── research/         # Hackathon strategy docs (judges, matrix, MVP)

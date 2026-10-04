@@ -367,7 +367,7 @@ CodeRabbit's status comment. If the repo reaches 10 stars, reviews become automa
 reviews:
   profile: chill
   path_instructions:
-    - path: "agent/src/lib/landed-cost/**"
+    - path: "contract/src/landed-cost.ts"
       instructions: |
         Money math. Check units, rounding and that every constant cites a source. Require unit tests.
     - path: "agent/src/tools/purchase*"

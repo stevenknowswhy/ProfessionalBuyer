@@ -1,0 +1,170 @@
+[
+  {
+    "id": "obs1",
+    "watchId": "w1",
+    "at": "2026-10-04T20:00:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs2",
+    "watchId": "w1",
+    "at": "2026-10-04T20:10:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs3",
+    "watchId": "w1",
+    "at": "2026-10-04T20:20:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs4",
+    "watchId": "w1",
+    "at": "2026-10-04T20:30:00.000Z",
+    "priceCents": 4300,
+    "inStock": true
+  },
+  {
+    "id": "obs5",
+    "watchId": "w1",
+    "at": "2026-10-04T20:40:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs6",
+    "watchId": "w1",
+    "at": "2026-10-04T20:50:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs7",
+    "watchId": "w1",
+    "at": "2026-10-04T21:00:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs8",
+    "watchId": "w1",
+    "at": "2026-10-04T21:10:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs9",
+    "watchId": "w1",
+    "at": "2026-10-04T21:20:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs10",
+    "watchId": "w1",
+    "at": "2026-10-04T21:30:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs11",
+    "watchId": "w1",
+    "at": "2026-10-04T21:40:00.000Z",
+    "priceCents": 4300,
+    "inStock": true
+  },
+  {
+    "id": "obs12",
+    "watchId": "w1",
+    "at": "2026-10-04T21:50:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs13",
+    "watchId": "w1",
+    "at": "2026-10-04T22:00:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs14",
+    "watchId": "w1",
+    "at": "2026-10-04T22:10:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs15",
+    "watchId": "w1",
+    "at": "2026-10-04T22:20:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs16",
+    "watchId": "w1",
+    "at": "2026-10-04T22:30:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs17",
+    "watchId": "w1",
+    "at": "2026-10-04T22:40:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs18",
+    "watchId": "w1",
+    "at": "2026-10-04T22:50:00.000Z",
+    "priceCents": 4300,
+    "inStock": true
+  },
+  {
+    "id": "obs19",
+    "watchId": "w1",
+    "at": "2026-10-04T23:00:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs20",
+    "watchId": "w1",
+    "at": "2026-10-04T23:10:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs21",
+    "watchId": "w1",
+    "at": "2026-10-04T23:20:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs22",
+    "watchId": "w1",
+    "at": "2026-10-04T23:30:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs23",
+    "watchId": "w1",
+    "at": "2026-10-04T23:40:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  },
+  {
+    "id": "obs24",
+    "watchId": "w1",
+    "at": "2026-10-04T23:50:00.000Z",
+    "priceCents": 4200,
+    "inStock": true
+  }
+]

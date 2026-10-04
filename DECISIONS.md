@@ -62,3 +62,22 @@ computes from the data, with a "how this was computed" drawer. Fixtures get expa
 The repo has 0 stars, and CodeRabbit does not auto-review public repos under 10 stars. A person must
 comment `@coderabbitai full review` on each PR (a bot-authored comment gets no response, confirmed on
 PR #1). CONTRIBUTING.md now says so.
+
+## 2026-10-04 ~12:00 — Solo, two parallel agents, one contract
+
+Team is one person. To fit the time left, work is split between a frontend agent (`web/`) and a backend
+agent (`agent/`, `worker/`, data, integrations), each with its own plan (PLAN-frontend.md,
+PLAN-backend.md). They meet at `contract/` (Zod schemas, landed-cost math, sample fixtures) and
+CONTRACT.md. The backend serves fixtures first so the frontend never waits. Approve and decline always
+go through REST, so how the backend resumes the Mastra agent never affects the UI.
+
+## 2026-10-04 ~12:00 — Checkout merchant is proposed by the backend agent
+
+"Guest checkout" means buying without an account, login or 2FA. Big retailers need those, which a
+cloud browser handles badly. The backend agent shortlists three guest-checkout merchants with a demo
+item at or under the spend cap, and the human confirms. `CHECKOUT_MODE=review` is the default.
+
+## 2026-10-04 ~12:00 — Cadence formula corrected
+
+`buys_per_year = (n - 1) / span_days * 365`. n purchases span n-1 intervals; the earlier `n / days`
+overstated the rate (most for items with few purchases). Implemented once in `contract/src/landed-cost.ts`.

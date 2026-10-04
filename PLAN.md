@@ -9,7 +9,7 @@ This plan serves three goals. Every decision below is judged against them.
 2. **The UI is beautiful.** It should look like an Awwwards submission, and it is our Best UI entry.
 3. **Every sponsor is used, with a clear use case** in [README.md](README.md) and [techStack.md](techStack.md).
 
-Companion docs: [techStack.md](techStack.md) (sponsor-by-sponsor), [MVP.md](MVP.md) (original slices),
+Companion docs: [PLAN-backend.md](PLAN-backend.md) and [PLAN-frontend.md](PLAN-frontend.md) (the two parallel agent plans), [CONTRACT.md](CONTRACT.md) (their shared interface), [techStack.md](techStack.md) (sponsor-by-sponsor), [MVP.md](MVP.md) (original slices),
 [STRATEGY.md](STRATEGY.md) (judging), [DECISIONS.md](DECISIONS.md).
 
 ---
@@ -22,7 +22,7 @@ Companion docs: [techStack.md](techStack.md) (sponsor-by-sponsor), [MVP.md](MVP.
 | Laya sidecar (`laya-sidecar/`) | Code on `main`, never run end to end |
 | Seed receipts (`seed/receipts/`) | 3 fixtures on `main`, too thin and partly leaking answers (section 4) |
 | App code (agent, web, worker, DB) | None |
-| `.env.example` | In open [PR #1](https://github.com/stevenknowswhy/ProfessionalBuyer/pull/1), not merged. No `.gitignore` exists yet |
+| `.env.example` | In open [PR #1](https://github.com/stevenknowswhy/ProfessionalBuyer/pull/1), not merged. `.gitignore` added on this branch |
 | CodeRabbit | Installed. Repo has 0 stars, so every review must be triggered by a human comment |
 
 ## 2. What each goal means in practice
@@ -80,6 +80,7 @@ Principles:
 ### Repo layout
 
 ```
+contract/       Shared Zod schemas, landed-cost math, sample fixtures (the frontend/backend interface)
 agent/          Mastra server: agents, tools, workflows, API routes, units + landed-cost code
 web/            Next.js app: landing, dashboard, chat, trace panel
 worker/         Price watches + daily briefing (runs locally or on a Sprite)
@@ -114,7 +115,7 @@ Mastra also creates its own tables (memory, workflow snapshots) through `Postgre
 delivered_cost   = item_price + shipping + import_duty_estimate
 unit_cost        = delivered_cost / normalized_units          (per sheet, per diaper, per egg, per oz)
 saving_per_buy   = (current_unit_cost - best_unit_cost) * units_per_purchase
-buys_per_year    = observed_purchases / observed_days * 365
+buys_per_year    = (observed_purchases - 1) / observed_days * 365   (n purchases span n-1 intervals)
 yearly_savings   = sum(saving_per_buy * buys_per_year)        over items with enough history
 ```
 
@@ -194,11 +195,16 @@ Never cut: the receipt-to-number path, the approval gate, Kernel live view, the 
 
 ### Work split
 
-Three lanes. Solo, run them in the order A, C, B. With several people or cloud agents, run them in parallel on separate branches with small PRs (CodeRabbit reviews small diffs better).
+Two agents run in parallel on separate branches. The human is a solo owner and merges at each gate.
 
-- **Lane A: agent and data.** Schema, ingest workflow, units, landed-cost code with tests, scan, approval gate, Kernel verify and checkout.
-- **Lane B: web.** Design system, dashboard, chat, approval card, trace panel, "the Number", landing.
-- **Lane C: integrations and infra.** AgentMail, Exa quality, Executor, Sprite worker, Laya, preflight, CodeRabbit config, docs, demo video.
+| Agent | Plan | Owns | Branch |
+|---|---|---|---|
+| Frontend (UI) | [PLAN-frontend.md](PLAN-frontend.md) | `web/` | `cursor/frontend-ui-5766` |
+| Backend (agent, data, integrations) | [PLAN-backend.md](PLAN-backend.md) | `agent/`, `worker/`, `db/`, `seed/`, `laya-sidecar/`, preflight, CodeRabbit config | `cursor/backend-core-5766` |
+
+They never wait on each other. [CONTRACT.md](CONTRACT.md) and `contract/` define every endpoint, tool result and sample payload. The backend serves the sample fixtures first, the frontend runs entirely on them, and the real backend replaces stubs endpoint by endpoint with no change in shape.
+
+Human tasks (solo owner): merge PRs at each gate, trigger CodeRabbit reviews, claim sponsor credits and supply keys, forward real receipts, set up the Kernel Vault, pick the wordmark, run the 3:15 design review and the rehearsals, and submit.
 
 ---
 
@@ -298,9 +304,10 @@ Defaults below are what the plan assumes. Change them only deliberately.
 | Inbound email | AgentMail WebSocket (no public URL needed) | After Spike D |
 | Spend controls | Per-purchase cap (`SPEND_CAP_USD`, default 25), merchant allowlist, offer-hash match, server-side approval check | Locked |
 | Checkout mode | `review` until two clean rehearsals, then `place` | 3:30 PM |
-| Checkout merchant | A guest-checkout merchant; **needs a pick** | 1:30 PM |
+| Checkout merchant | A guest-checkout merchant (no account or login), proposed by the backend agent with a delivered cost at most the spend cap; human confirms | 1:30 PM |
 | Product name | Keep "Personal Professional Buyer" in the repo; pick a short brand name for the UI. Suggestion: **Margin** | 3:30 PM, so the wordmark can be built |
-| Team size and lane owners | **Needs input** | Now |
+| Team size | **Solo**, with two parallel cloud agents (frontend and backend) | Decided |
+| Frontend/backend interface | `contract/` package and [CONTRACT.md](CONTRACT.md); approve/decline always go through REST | Locked |
 | Env var names | Align with Neon's CLI output (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`) rather than `NEON_DATABASE_URL` in PR #1 | G0 |
 
 ## 11. Out of scope today

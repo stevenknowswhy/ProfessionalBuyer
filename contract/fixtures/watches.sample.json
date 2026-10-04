@@ -1,0 +1,32 @@
+[
+  {
+    "id": "w1",
+    "itemId": "paper-towels",
+    "offerUrl": "https://example.com/overseasmart/paper-towels",
+    "startedAt": "2026-10-04T20:00:00.000Z",
+    "observationCount": 190,
+    "lastCheckedAt": "2026-10-04T23:00:00.000Z",
+    "runsOn": "sprite",
+    "lastPriceCents": 4200
+  },
+  {
+    "id": "w2",
+    "itemId": "toilet-paper",
+    "offerUrl": "https://example.com/costco/toilet-paper",
+    "startedAt": "2026-10-04T20:00:00.000Z",
+    "observationCount": 190,
+    "lastCheckedAt": "2026-10-04T23:00:00.000Z",
+    "runsOn": "sprite",
+    "lastPriceCents": 2399
+  },
+  {
+    "id": "w3",
+    "itemId": "diapers",
+    "offerUrl": "https://example.com/overseasmart/diapers",
+    "startedAt": "2026-10-04T20:00:00.000Z",
+    "observationCount": 190,
+    "lastCheckedAt": "2026-10-04T23:00:00.000Z",
+    "runsOn": "sprite",
+    "lastPriceCents": 3200
+  }
+]
