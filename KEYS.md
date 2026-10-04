@@ -11,12 +11,13 @@ Check the hackathon page and sponsor tables for credit codes before paying for a
 | # | Service | Env var(s) | Where to get it | Notes | Status |
 |---|---|---|---|---|---|
 | 1 | **Neon** Postgres | `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | [console.neon.tech](https://console.neon.tech): create a project, or run `npx neon@latest init` / `neon env pull` | Pick region `aws-us-east-1`, `aws-us-east-2`, `aws-eu-central-1` or `aws-ap-southeast-1` so the AI Gateway works too | ☐ |
-| 2 | **Exa** | `EXA_API_KEY` | [dashboard.exa.ai/api-keys](https://dashboard.exa.ai/api-keys) | Powers the live price scan and the yearly number | ☐ |
+| 2 | **Exa** | `EXA_API_KEY` | [dashboard.exa.ai/api-keys](https://dashboard.exa.ai/api-keys) | Powers the live price scan and the yearly number. ✅ verified with a live search | ✅ |
 | 3 | **OpenAI** (default LLM) | `OPENAI_API_KEY` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Default for every model call (`gpt-4o-mini`). ✅ provided | ✅ |
 | 3b | **OpenRouter** (fallback LLM) | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) | Used automatically when OpenAI is rate-limited or down, through the free router (`openrouter/free`). ✅ provided | ✅ |
 | 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Price verification and checkout with live view | ☐ |
 | 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to): create a key, then create an inbox and copy its ID | The inbox you forward receipts to. Also set `BRIEFING_TO_EMAIL` to your own address | ☐ |
-| 6 | **Fly.io Sprites** | `SPRITES_TOKEN` | [sprites.dev](https://sprites.dev) (Fly.io account), create an API token | **Needed by 1:30 PM** so the worker is watching prices by 1:45 and the demo has real history | ☐ |
+| 6 | **Fly.io** | `FLY_API_TOKEN` | [fly.io/dashboard/personal/tokens](https://fly.io/dashboard/personal/tokens) | ✅ verified. Org `personal` (Stefano94120). This is a Fly token, not a Sprites token | ✅ |
+| 6b | **Sprites** | `SPRITES_TOKEN` | [sprites.dev/account](https://sprites.dev/account) | Still needed. A Fly token is rejected by `api.sprites.dev`. Mint an org token there (shape `org/id/token-id/secret`) | ☐ |
 
 ## 2. Set up, but no key to paste
 
