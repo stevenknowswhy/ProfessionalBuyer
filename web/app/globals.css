@@ -290,7 +290,7 @@
   }
 
   .phone-main {
-    padding-bottom: calc(var(--phone-tab) + env(safe-area-inset-bottom, 0px) + 1rem);
+    padding-bottom: calc(var(--phone-tab) + env(safe-area-inset-bottom, 0px) + 1.25rem);
   }
 
   .field {
@@ -314,8 +314,14 @@
     max-width: 100%;
   }
 
-  .year-figure number-flow {
+  .year-figure number-flow-react {
     max-width: 100%;
+  }
+
+  /* Bodoni's period is narrow. NumberFlow gives the decimal a full digit slot. */
+  .year-figure number-flow-react::part(decimal) {
+    width: 0.28em;
+    min-width: 0;
   }
 
   .indeterminate {

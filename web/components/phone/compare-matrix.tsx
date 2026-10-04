@@ -257,7 +257,7 @@ function LaneRow({
     <div className={cn("flex items-start justify-between gap-3 border-t border-rule/70 px-3 py-3", isBest && "bg-margin-wash")}>
       <div className="min-w-0">
         <p className="text-small font-semibold text-ink">{lane.label}</p>
-        <p className="max-w-[18ch] text-micro text-ink-faint">{lane.hint}</p>
+        <p className="text-micro text-ink-faint">{lane.hint}</p>
       </div>
       <div className="min-w-0 max-w-[58%] text-right">
         <Cell offer={offer} best={best} />

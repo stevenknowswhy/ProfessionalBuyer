@@ -29,7 +29,7 @@ export function BuyerApp() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full min-w-0 max-w-3xl flex-col bg-paper">
-      <header className="phone-header sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur-md">
+      <header className="phone-header sticky top-0 z-30 border-b border-rule bg-paper">
         <div className="flex h-14 items-center justify-between gap-3 px-4">
           <Wordmark />
           <p className="shrink-0 text-small text-ink-soft tabular-nums">{count === 1 ? "1 store" : `${count} stores`}</p>

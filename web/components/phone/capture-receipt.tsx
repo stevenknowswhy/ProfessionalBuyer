@@ -159,7 +159,7 @@ export function CaptureReceipt({
         <label className="pressable surface flex min-h-[4.25rem] cursor-pointer items-center gap-4 px-4 text-ink">
           <ImagePlus aria-hidden className="size-6 shrink-0" />
           <span className="text-body font-semibold">Upload a photo</span>
-          <input type="file" accept="image/*" className="sr-only" onChange={(event) => take(event.target.files?.[0] ?? null)} />
+          <input type="file" accept="image/*" className="sr-only text-base" onChange={(event) => take(event.target.files?.[0] ?? null)} />
         </label>
         <label className="pressable flex min-h-[4.75rem] cursor-pointer items-center gap-4 rounded-panel bg-ink px-4 text-paper-raised">
           <Camera aria-hidden className="size-7 shrink-0" />
@@ -171,7 +171,7 @@ export function CaptureReceipt({
             type="file"
             accept="image/*"
             capture="environment"
-            className="sr-only"
+            className="sr-only text-base"
             onChange={(event) => take(event.target.files?.[0] ?? null)}
           />
         </label>
