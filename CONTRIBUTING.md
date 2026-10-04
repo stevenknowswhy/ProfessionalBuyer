@@ -6,6 +6,9 @@ Thanks for your interest! This project was started at the Build Personal Agents 
 ## Ground rules
 
 - **Every PR is reviewed by CodeRabbit** (AI code review, free for this public repo).
+  Until the repo has 10 stars, CodeRabbit does not review automatically: a person (not a bot
+  account) comments `@coderabbitai full review` on the PR, or ticks **Trigger review** in
+  CodeRabbit's status comment.
   Keep PRs small and focused so reviews stay useful.
 - **Demo honesty:** all numbers the demo shows must be reproducible. If your PR changes a
   computed value (savings, landed cost, confidence), document how it's derived.
@@ -16,10 +19,10 @@ Thanks for your interest! This project was started at the Build Personal Agents 
 
 Prerequisites:
 
-- Node 20+ and pnpm, **or** Python 3.12 and pip _(TODO(team): lock one)_
-- Docker + Docker Compose (local services)
-- API keys — copy `.env.example` to `.env` and fill in:
-  `EXA_API_KEY`, `KERNEL_API_KEY`, `AGENTMAIL_API_KEY`, `NEON_DATABASE_URL`, …
+- Node 22+ and pnpm (the product is TypeScript)
+- Python 3.12 and pip, only for `laya-sidecar/`
+- API keys — copy `.env.example` to `.env` and fill in the variables listed in
+  [techStack.md](techStack.md#environment-variables)
 
 ```bash
 git clone https://github.com/stevenknowswhy/ProfessionalBuyer.git
@@ -34,10 +37,14 @@ cp .env.example .env   # fill in keys (see above)
 
 ```text
 .
-├── agent/            # Mastra agent: tools, workflows, Observational Memory (TODO)
-├── laya-sidecar/     # Local Laya decision service (FastAPI on 127.0.0.1) (TODO)
-├── web/              # assistant-ui chat + savings dashboard (TODO)
-├── seed/             # Fixture receipts for the demo (TODO)
+├── agent/            # Mastra server: tools, workflows, memory, landed-cost code (TODO)
+├── web/              # Next.js: assistant-ui chat, savings dashboard, trace panel (TODO)
+├── worker/           # Price watches + daily briefing; runs locally or on a Fly Sprite (TODO)
+├── laya-sidecar/     # Local Laya decision service (FastAPI on 127.0.0.1)
+├── db/schema.sql     # Plain SQL schema for Neon (TODO)
+├── seed/             # Fixture receipts for the demo
+├── PLAN.md           # Build plan, schedule, risks
+├── techStack.md      # Sponsor-by-sponsor use cases and wiring
 ├── .claude/skills/   # Versioned agent skills (laya-integration)
 └── research/         # Hackathon strategy docs (judges, matrix, MVP)
 ```
