@@ -1,0 +1,22 @@
+Subject: Your Instacart receipt — Safeway order delivered Sep 27
+From: receipts@instacart.com
+Date: Sat, 27 Sep 2026 18:42:00 -0700
+
+Thanks for shopping with Instacart. Your Safeway order has been delivered.
+
+Order #88421093 | Delivered September 27, 2026
+
+Items:
+1x Organic Whole Milk, 1 gal — $7.49
+1x Large White Eggs, 18 ct — $6.99
+2x Sourdough Loaf, 24oz — $9.98 ($4.99 ea)
+1x Huggies Little Movers Diapers, Size 4, 66 ct — $24.99
+1x Bananas, 2 lb — $1.58
+
+Subtotal: $51.03
+Delivery fee: $3.99
+Service fee: $2.55
+Tax: $0.75
+Order total: $58.32
+
+Note: this is your 4th diaper order this month (weekly cadence).
