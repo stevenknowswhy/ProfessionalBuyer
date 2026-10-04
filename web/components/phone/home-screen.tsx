@@ -14,7 +14,7 @@ export function HomeScreen({ cleared, onReceipt }: { cleared: boolean; onReceipt
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="type-heading text-[1.75rem] text-ink">Money kept</h1>
+        <h1 className="type-heading text-[1.75rem] text-ink">Income Reclaimed</h1>
         <p className="max-w-[34ch] text-body text-ink-soft">
           {cleared
             ? "The sample ledger is cleared. Real savings will show here after the buyer works from your receipts."

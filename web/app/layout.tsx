@@ -4,7 +4,7 @@ import { display, mono, sans } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Margin", template: "%s | Margin" },
+  title: { default: "Genie", template: "%s | Genie" },
   description: "A professional buyer for your household. We were promised a utopia. This is part of it.",
 };
 

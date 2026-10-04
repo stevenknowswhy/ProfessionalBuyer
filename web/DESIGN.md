@@ -1,4 +1,4 @@
-# Margin: design token plan
+# Genie: design token plan
 
 The product is a professional buyer for one household. The interface is a **concierge's private ledger**: calm, exact, a little formal. It borrows from the physical things a bookkeeper uses (green-grey ledger paper, iron-gall ink, a highlighter for "look at this") instead of from AI dashboards.
 
@@ -72,7 +72,7 @@ Every money value uses `tabular-nums` (`.money`). Dollar figures come only from 
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ Margin            Demo household   Sample data                 Review mode  │ 56px
+│ Genie             Demo household   Sample data                 Review mode  │ 56px
 ├──────────────┬────────────────────────────────────────┬──────────────────────┤
 │ Household    │ Concierge                              │ Needs your approval  │
 │ ledger       │                                        │ ┌──────────────────┐ │
