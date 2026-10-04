@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { Household } from "@buyer/contract";
 import { formatUsd } from "@buyer/contract";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FamilyBasket } from "@/components/phone/family-basket";
 import { sampleLines, type ReceiptLine } from "@/lib/receipt";
 
 export function CaptureReceipt({
@@ -140,6 +141,8 @@ export function CaptureReceipt({
           </ul>
         </section>
       )}
+
+      <FamilyBasket />
 
       <div className="mt-auto flex min-w-0 flex-col gap-3 pt-2">
         {householdError ? (
