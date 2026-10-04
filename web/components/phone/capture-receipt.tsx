@@ -4,13 +4,16 @@ import { Camera, ImagePlus } from "lucide-react";
 import { useState } from "react";
 import type { Household } from "@buyer/contract";
 import { formatUsd } from "@buyer/contract";
+import { Skeleton } from "@/components/ui/skeleton";
 import { sampleLines, type ReceiptLine } from "@/lib/receipt";
 
 export function CaptureReceipt({
   household,
+  householdError = null,
   onCompare,
 }: {
   household?: Household;
+  householdError?: string | null;
   onCompare: (line: ReceiptLine, source: "vision" | "sample", retailer: string) => void;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -64,46 +67,27 @@ export function CaptureReceipt({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-1 flex-col gap-5">
       <div className="flex flex-col gap-2">
         <h2 className="type-heading text-[1.75rem] text-ink">Photograph a receipt</h2>
-        <p className="max-w-[36ch] text-body text-ink-soft">
+        <p className="max-w-[34ch] text-body text-ink-soft">
           Take a picture or upload one. Pick a line, and the buyer searches your stores for the same item.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <label className="pressable flex min-h-36 cursor-pointer flex-col items-start justify-between rounded-panel bg-ink p-4 text-paper-raised">
-          <Camera aria-hidden className="size-6" />
-          <span className="text-body font-semibold">Take a picture</span>
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="sr-only"
-            onChange={(event) => take(event.target.files?.[0] ?? null)}
-          />
-        </label>
-        <label className="pressable surface flex min-h-36 cursor-pointer flex-col items-start justify-between p-4 text-ink">
-          <ImagePlus aria-hidden className="size-6" />
-          <span className="text-body font-semibold">Upload a photo</span>
-          <input type="file" accept="image/*" className="sr-only" onChange={(event) => take(event.target.files?.[0] ?? null)} />
-        </label>
-      </div>
-
       {preview && (
-        <figure className="surface overflow-hidden">
+        <figure className="surface min-w-0 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={preview} alt="The receipt you added" className="max-h-64 w-full object-contain bg-paper-sunk" />
-          <figcaption className="flex items-center justify-between gap-3 p-3">
-            <span className="truncate text-small text-ink-soft">{file?.name ?? "Receipt photo"}</span>
+          <figcaption className="flex min-w-0 flex-col gap-3 p-3">
+            <span className="min-w-0 truncate text-small text-ink-soft">{file?.name ?? "Receipt photo"}</span>
             <button
               type="button"
               onClick={readPhoto}
               disabled={reading}
-              className="pressable min-h-10 shrink-0 rounded-chip bg-ink px-3 text-small font-semibold text-paper-raised disabled:opacity-60"
+              className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised disabled:opacity-60"
             >
-              {reading ? "Reading" : "Read this receipt"}
+              {reading ? "Reading the receipt" : "Read this receipt"}
             </button>
           </figcaption>
         </figure>
@@ -115,29 +99,41 @@ export function CaptureReceipt({
         </p>
       )}
 
+      {reading && (
+        <div aria-hidden className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
+        </div>
+      )}
+
       {lines && lines.length > 0 && (
-        <section aria-labelledby="receipt-lines" className="flex flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-3">
-            <h3 id="receipt-lines" className="text-small font-semibold text-ink">
+        <section aria-labelledby="receipt-lines" className="flex min-w-0 flex-col gap-2">
+          <div className="flex min-w-0 items-baseline justify-between gap-3">
+            <h3 id="receipt-lines" className="min-w-0 break-words text-small font-semibold text-ink">
               {retailer ? retailer : "Receipt"} lines
             </h3>
-            {source === "sample" && <span className="text-micro font-semibold text-ink-soft">Sample data</span>}
+            {source === "sample" && <span className="shrink-0 text-micro font-semibold text-ink-soft">Sample data</span>}
           </div>
-          <ul className="flex flex-col">
+          <ul className="flex min-w-0 flex-col">
             {lines.map((line) => (
               <li key={line.id} className="border-b border-rule/70 last:border-b-0">
                 <button
                   type="button"
                   onClick={() => onCompare(line, source, retailer)}
-                  className="pressable flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left"
+                  className="pressable flex min-h-14 w-full min-w-0 items-center justify-between gap-3 py-2 text-left"
                 >
-                  <span>
-                    <span className="block text-body font-semibold text-ink">{line.name}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-words text-body font-semibold text-ink">{line.name}</span>
                     <span className="text-small text-ink-soft">
                       {line.quantity} {line.unit}
                     </span>
                   </span>
-                  <span className="money text-body text-ink">{formatUsd(line.lineTotalCents)}</span>
+                  <span className="shrink-0 text-right">
+                    <span className="money block text-body text-ink">{formatUsd(line.lineTotalCents)}</span>
+                    <span className="text-micro font-semibold text-margin">Compare</span>
+                  </span>
                 </button>
               </li>
             ))}
@@ -145,14 +141,41 @@ export function CaptureReceipt({
         </section>
       )}
 
-      <button
-        type="button"
-        onClick={useSample}
-        disabled={!household}
-        className="self-start text-small font-semibold text-ink-soft underline-offset-4 hover:underline disabled:opacity-50"
-      >
-        Use the sample receipt
-      </button>
+      <div className="mt-auto flex min-w-0 flex-col gap-3 pt-2">
+        {householdError ? (
+          <p role="alert" className="rounded-card bg-carmine-wash px-3 py-3 text-small text-carmine">
+            {householdError}
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={useSample}
+            disabled={!household}
+            className="pressable inline-flex min-h-11 items-center self-start text-small font-semibold text-ink underline decoration-rule underline-offset-4 disabled:no-underline disabled:opacity-60"
+          >
+            {household ? "Use the sample receipt" : "Loading the sample household"}
+          </button>
+        )}
+        <label className="pressable surface flex min-h-[4.25rem] cursor-pointer items-center gap-4 px-4 text-ink">
+          <ImagePlus aria-hidden className="size-6 shrink-0" />
+          <span className="text-body font-semibold">Upload a photo</span>
+          <input type="file" accept="image/*" className="sr-only" onChange={(event) => take(event.target.files?.[0] ?? null)} />
+        </label>
+        <label className="pressable flex min-h-[4.75rem] cursor-pointer items-center gap-4 rounded-panel bg-ink px-4 text-paper-raised">
+          <Camera aria-hidden className="size-7 shrink-0" />
+          <span>
+            <span className="block text-body font-semibold">Take a picture</span>
+            <span className="block text-small text-paper-raised/80">Opens the camera</span>
+          </span>
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="sr-only"
+            onChange={(event) => take(event.target.files?.[0] ?? null)}
+          />
+        </label>
+      </div>
     </div>
   );
 }

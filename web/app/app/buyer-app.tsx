@@ -1,7 +1,7 @@
 "use client";
 
 import { Camera, LayoutGrid, Store } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { CaptureReceipt } from "@/components/phone/capture-receipt";
 import { CompareMatrix } from "@/components/phone/compare-matrix";
 import { Wordmark } from "@/components/shell/top-bar";
@@ -23,17 +23,30 @@ export function BuyerApp() {
   const [source, setSource] = useState<"vision" | "sample">("vision");
   const count = chosenStores(stores.selection).length;
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [tab]);
+
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col bg-paper">
-      <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-rule bg-paper/95 px-4 backdrop-blur-sm">
-        <Wordmark />
-        <p className="text-small text-ink-soft">{count === 1 ? "1 store" : `${count} stores`}</p>
+    <div className="mx-auto flex min-h-dvh w-full min-w-0 max-w-3xl flex-col bg-paper">
+      <header className="phone-header sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur-md">
+        <div className="flex h-14 items-center justify-between gap-3 px-4">
+          <Wordmark />
+          <p className="shrink-0 text-small text-ink-soft tabular-nums">{count === 1 ? "1 store" : `${count} stores`}</p>
+        </div>
       </header>
 
-      <main className="flex-1 px-4 pt-5 pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
+      <main className="phone-main flex w-full min-w-0 flex-1 flex-col px-4 pt-5">
         {tab === "receipt" && (
           <CaptureReceipt
             household={household.data}
+            householdError={
+              household.error instanceof Error
+                ? household.error.message
+                : household.error
+                  ? "The sample household did not load."
+                  : null
+            }
             onCompare={(next, nextSource, nextRetailer) => {
               setLine(next);
               setSource(nextSource);
@@ -62,11 +75,8 @@ export function BuyerApp() {
         )}
       </main>
 
-      <nav
-        aria-label="Sections"
-        className="fixed inset-x-0 bottom-0 z-20 border-t border-rule bg-paper-raised pb-[env(safe-area-inset-bottom)]"
-      >
-        <div className="mx-auto grid max-w-3xl grid-cols-3">
+      <nav aria-label="Sections" className="phone-tabs fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-paper-raised">
+        <div className="mx-auto grid w-full max-w-3xl grid-cols-3">
           <TabButton current={tab} id="receipt" label="Receipt" icon={<Camera aria-hidden className="size-5" />} onSelect={setTab} />
           <TabButton current={tab} id="compare" label="Compare" icon={<LayoutGrid aria-hidden className="size-5" />} onSelect={setTab} />
           <TabButton current={tab} id="stores" label="Stores" icon={<Store aria-hidden className="size-5" />} onSelect={setTab} />
@@ -86,7 +96,7 @@ function TabButton({
   current: Tab;
   id: Tab;
   label: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   onSelect: (tab: Tab) => void;
 }) {
   const selected = current === id;
@@ -96,12 +106,13 @@ function TabButton({
       aria-current={selected ? "page" : undefined}
       onClick={() => onSelect(id)}
       className={cn(
-        "pressable flex min-h-14 flex-col items-center justify-center gap-1 text-micro font-semibold",
-        selected ? "text-margin" : "text-ink-soft",
+        "pressable relative flex min-h-14 flex-col items-center justify-center gap-0.5 px-2 text-small font-semibold",
+        selected ? "bg-margin-wash text-ink" : "text-ink-soft",
       )}
     >
-      {icon}
-      {label}
+      <span aria-hidden className={cn("absolute inset-x-5 top-0 h-0.5 rounded-full", selected ? "bg-margin" : "bg-transparent")} />
+      <span className={selected ? "text-margin" : undefined}>{icon}</span>
+      <span>{label}</span>
     </button>
   );
 }

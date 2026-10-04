@@ -55,6 +55,8 @@
   --border: oklch(0.89 0.018 210);
   --input: oklch(0.86 0.025 215);
   --ring: var(--ink);
+
+  --phone-tab: 3.5rem;
 }
 
 @theme inline {
@@ -270,10 +272,50 @@
   }
 
   .pressable {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition: transform var(--dur-press) var(--ease-out);
   }
   .pressable:active:not(:disabled) {
     transform: scale(0.97);
+  }
+
+  /* iPhone chrome for /app. Safe areas are 0 away from a notched device. */
+  .phone-header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .phone-tabs {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .phone-main {
+    padding-bottom: calc(var(--phone-tab) + env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+
+  .field {
+    min-height: 48px;
+    font-size: 16px;
+    line-height: 1.4;
+    scroll-margin-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+    scroll-margin-bottom: calc(var(--phone-tab) + env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+
+  .year-slot {
+    container-type: inline-size;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .year-figure {
+    font-size: clamp(2.75rem, 12vw, 5.5rem);
+    font-size: clamp(2.75rem, 14cqi, 5.5rem);
+    line-height: 0.9;
+    max-width: 100%;
+  }
+
+  .year-figure number-flow {
+    max-width: 100%;
   }
 
   .indeterminate {
@@ -320,6 +362,12 @@
   }
   [data-slot="skeleton"] {
     animation: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fine-hover:hover {
+    background-color: var(--paper-sunk);
   }
 }
 

@@ -42,11 +42,11 @@ function StoreButton({
       aria-pressed={pressed}
       onClick={onClick}
       className={cn(
-        "pressable flex min-h-11 items-center justify-between gap-3 rounded-chip border px-3 text-left",
+        "pressable flex w-full min-h-11 items-center justify-between gap-3 rounded-chip border px-3 text-left",
         prominent ? "min-h-14 px-4" : "",
         pressed
           ? "border-ink bg-ink text-paper-raised"
-          : "border-rule bg-paper-raised text-ink hover:bg-paper-sunk",
+          : "fine-hover border-rule bg-paper-raised text-ink",
       )}
     >
       <span className="min-w-0">
@@ -119,23 +119,23 @@ export function StoreBoard({
   }
 
   return (
-    <div className={cn("mx-auto flex w-full max-w-5xl flex-col gap-8", onClose ? "px-6 py-6" : "gap-6 py-1")}>
+    <div className={cn("mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6", onClose ? "px-6 py-6" : "py-1")}>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex max-w-xl flex-col gap-2">
-          <h2 className="type-heading text-ink">Stores</h2>
+        <div className="flex min-w-0 max-w-xl flex-col gap-2">
+          <h2 className="type-heading text-[1.75rem] text-ink">Stores</h2>
           <p className="text-body text-ink-soft">
             Choose where the buyer looks. Big-box stores are the large buttons. eBay, Temu, and Etsy are under Marketplace.
             Paste a link for a store that is not listed.
           </p>
         </div>
         {onClose && (
-          <button type="button" onClick={onClose} className="pressable min-h-10 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised">
+          <button type="button" onClick={onClose} className="pressable min-h-11 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised">
             Back to the ledger
           </button>
         )}
       </div>
 
-      <section aria-labelledby="stores-searching" className="surface flex flex-col gap-3 p-4">
+      <section aria-labelledby="stores-searching" className="surface flex min-w-0 flex-col gap-3 p-4">
         <div className="flex items-baseline justify-between gap-3">
           <h3 id="stores-searching" className="text-small font-semibold text-ink">
             The buyer searches {plural(chosen.length, "store")}
@@ -144,17 +144,17 @@ export function StoreBoard({
         {chosen.length === 0 ? (
           <p className="text-small text-ink-soft">None yet. Add a big-box store or paste a link.</p>
         ) : (
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex min-w-0 flex-wrap gap-2">
             {chosen.map((store) => (
-              <li key={store.id}>
+              <li key={store.id} className="max-w-full min-w-0">
                 <button
                   type="button"
                   onClick={() => (store.custom ? onRemoveCustom(store.id) : onToggle(store.id))}
-                  className="pressable inline-flex min-h-10 items-center gap-2 rounded-full bg-margin-wash px-3 text-small font-semibold text-ink"
+                  className="pressable inline-flex max-w-full min-h-11 items-center gap-2 rounded-full bg-margin-wash px-3 text-small font-semibold text-ink"
                 >
-                  {store.name}
-                  <span className="text-micro font-medium text-ink-soft">{store.custom ? "Your link" : groupLabel(store.group!)}</span>
-                  <X aria-hidden className="size-3.5" />
+                  <span className="truncate">{store.name}</span>
+                  <span className="shrink-0 text-micro font-medium text-ink-soft">{store.custom ? "Your link" : groupLabel(store.group!)}</span>
+                  <X aria-hidden className="size-3.5 shrink-0" />
                   <span className="sr-only">Remove {store.name}</span>
                 </button>
               </li>
@@ -163,11 +163,11 @@ export function StoreBoard({
         )}
       </section>
 
-      <form onSubmit={submitLink} className="surface flex flex-col gap-3 p-4">
+      <form onSubmit={submitLink} className="surface flex min-w-0 flex-col gap-3 p-4">
         <label htmlFor="store-link" className="text-small font-semibold text-ink">
           Paste a store link
         </label>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
           <input
             id="store-link"
             value={link}
@@ -177,9 +177,9 @@ export function StoreBoard({
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="min-h-11 flex-1 rounded-chip border border-rule bg-paper px-3 text-body text-ink outline-none placeholder:text-ink-faint"
+            className="field min-w-0 w-full flex-1 rounded-chip border border-rule bg-paper px-3 text-ink outline-none placeholder:text-ink-faint"
           />
-          <button type="submit" className="pressable min-h-11 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised">
+          <button type="submit" className="pressable min-h-12 shrink-0 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised sm:min-h-11">
             Add store
           </button>
         </div>
@@ -211,13 +211,13 @@ export function StoreBoard({
                     const message = onAddLink(store.url);
                     setNotice(message);
                   }}
-                  className="pressable flex min-h-14 w-full items-center justify-between gap-3 rounded-chip border border-rule bg-paper-raised px-4 text-left"
+                  className="pressable fine-hover flex min-h-14 w-full items-center justify-between gap-3 rounded-chip border border-rule bg-paper-raised px-4 text-left"
                 >
-                  <span>
-                    <span className="block text-body font-semibold text-ink">{store.name}</span>
-                    <span className="block text-micro text-ink-faint">{store.domain}</span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-body font-semibold text-ink">{store.name}</span>
+                    <span className="block truncate text-micro text-ink-faint">{store.domain}</span>
                   </span>
-                  <span className="text-micro font-semibold text-ink-soft">Add</span>
+                  <span className="shrink-0 text-micro font-semibold text-ink-soft">Add</span>
                 </button>
               </li>
             ))}
@@ -226,18 +226,21 @@ export function StoreBoard({
       </section>
       )}
 
-      <div className="flex flex-col gap-3">
-        <label className="relative block">
+      <div className="flex min-w-0 flex-col gap-3">
+        <label className="relative block min-w-0">
           <span className="sr-only">Filter stores</span>
           <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Find a store, such as Temu or Costco"
-            className="min-h-11 w-full rounded-chip border border-rule bg-paper-raised pr-3 pl-10 text-body text-ink outline-none placeholder:text-ink-faint"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            className="field w-full min-w-0 rounded-chip border border-rule bg-paper-raised pr-3 pl-10 text-ink outline-none placeholder:text-ink-faint"
           />
         </label>
-        <div role="group" aria-label="Store groups" className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Store groups" className="flex min-w-0 flex-wrap gap-2">
           {FILTERS.map((item) => {
             const selected = group === item.id;
             return (
@@ -247,7 +250,7 @@ export function StoreBoard({
                 aria-pressed={selected}
                 onClick={() => setGroup(item.id)}
                 className={cn(
-                  "pressable min-h-10 rounded-full px-3 text-small font-semibold",
+                  "pressable min-h-11 rounded-full px-3.5 text-small font-semibold",
                   selected ? "bg-ink text-paper-raised" : "bg-paper-sunk text-ink",
                 )}
               >
@@ -310,7 +313,7 @@ export function StoreBoard({
                       pressed={selection.selectedIds.includes(store.id)}
                       onClick={() => onToggle(store.id)}
                     />
-                    <button type="button" onClick={() => onRemoveCustom(store.id)} className="self-start px-1 text-micro font-semibold text-ink-soft underline-offset-4 hover:underline">
+                    <button type="button" onClick={() => onRemoveCustom(store.id)} className="inline-flex min-h-11 max-w-full items-center self-start break-words px-1 text-left text-small font-semibold text-ink-soft underline decoration-rule underline-offset-4">
                       Remove {store.name}
                     </button>
                   </li>
