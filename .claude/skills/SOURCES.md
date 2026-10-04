@@ -11,7 +11,7 @@ Copied (not symlinked) on Oct 4, 2026 so every cloud agent gets the same pinned 
 | `emil-design-eng`, `review-animations` | frontend | [emilkowalski/skills](https://github.com/emilkowalski/skills) | e8a175d | MIT |
 | `web-design-guidelines` | frontend, release | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 063bee9 | MIT (stated in README) |
 | `mastra` | backend-core | [mastra-ai/skills](https://github.com/mastra-ai/skills) | 1ddd321 | Apache-2.0 |
-| `neon-postgres`, `neon-ai-gateway` | backend-core, integrations | [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills) | 9e4a570 | Apache-2.0 |
+| `neon`, `neon-postgres`, `neon-ai-gateway`, `neon-auth`, `neon-functions`, `neon-object-storage`, `neon-postgres-branches`, `neon-postgres-egress-optimizer` | backend-core, integrations | [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills), installed by `neon skills` (symlinked from `.agents/skills`) | 9e4a570 | Apache-2.0 |
 | `build-with-exa` | backend-core | [exa-labs/agent-skills](https://github.com/exa-labs/agent-skills) | 975171a | MIT |
 | `kernel-typescript-sdk` | integrations | [kernel/skills](https://github.com/kernel/skills) | 6571289 | MIT |
 | `agentmail`, `agentmail-toolkit`, `agentmail-send-email`, `agentmail-check-email`, `agentmail-manage-inboxes`, `agentmail-mcp`, `agentmail-cli` | integrations | [agentmail-to/agentmail-skills](https://github.com/agentmail-to/agentmail-skills) | ccbaed1 | no license file in the repo (installed at the owner's explicit request) |
