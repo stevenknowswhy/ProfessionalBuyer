@@ -13,12 +13,18 @@ Rule: everything in the demo runs live. Cut scope before cutting the live demo.
 - **Fly Sprites** — price watches as long-running jobs (Johnston)
 - **assistant-ui** — chat with streaming + tap-to-approve (Farshid)
 - **Executor** — MCP gateway for retailer/integration tools; approval policies (Sullivan)
+- **Laya** (open source, Apache-2.0) — local decision model (~30ms, no LLM call, no data leaves
+  the machine): receipt triage (is-this-a-receipt, which retailer), buy guardrails
+  (seller-legitimacy yes/no, brand-preference match), price-drop significance scoring.
+  Low-confidence cases cascade to the LLM or human approval — the "System 1" in front of
+  the agent's "System 2". Skill: `.claude/skills/laya-integration/SKILL.md`
 - **Repo** — public on GitHub with README + demo GIF from the start (Thorelli)
 - **UI** — savings dashboard; sweat spacing/type/motion (Krehel)
 
 ## Build slices (in priority order — stop when time runs out)
 
-1. **Receipt → graph → scan → number.** Forward a receipt → parse line items → Exa price scan
+1. **Receipt → graph → scan → number.** Forward a receipt → Laya triage (is-this-a-receipt,
+   which retailer — milliseconds, no LLM cost) → parse line items → Exa price scan
    (local / shipped / long-haul) → landed-cost math → per-item + yearly savings dashboard.
    *This alone is a demoable product.*
 2. **Approval-gated buy.** "Buy cheapest" → chat approval card → Kernel checkout on a real
