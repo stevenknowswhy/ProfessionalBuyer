@@ -436,7 +436,7 @@ These change how we build. Each was checked against vendor docs or source today.
 
 | Area | Constraint | What we do |
 |---|---|---|
-| Neon AI Gateway | Needs a paid Neon plan with prepaid credits, and a project in `aws-us-east-1`, `aws-us-east-2`, `aws-eu-central-1` or `aws-ap-southeast-1`. Credential: `neon credentials create --scope ai_gateway:invoke` | Check plan and region first (human, now). Direct provider key is the labeled fallback |
+| LLM | Neon AI Gateway needs a paid plan we do not have | **OpenAI by default** (`OPENAI_API_KEY`, `gpt-4o-mini`), **OpenRouter free router as fallback** (`OPENROUTER_API_KEY`, `https://openrouter.ai/api/v1`, model `openrouter/free`). Fallback triggers on a rate limit, an error, or a missing OpenAI key. The status page says which one served the call |
 | Mastra + assistant-ui | assistant-ui needs AI SDK v7; `chatRoute` defaults to v5 | `chatRoute({ path: '/chat/:agentId', version: 'v7' })`, all AI packages at `@latest` together |
 | Approval | Native v7 approval round-trip is not covered by Mastra's end-to-end tests | REST approval is the contract; native approval is a stretch |
 | Sprites | Paused Sprites drop TCP; a task keeps one awake for at most 1 hour per renewal | Service plus renewed task; no WebSocket on the Sprite |

@@ -11,20 +11,21 @@ Check the hackathon page and sponsor tables for credit codes before paying for a
 | # | Service | Env var(s) | Where to get it | Notes | Status |
 |---|---|---|---|---|---|
 | 1 | **Neon** Postgres | `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | [console.neon.tech](https://console.neon.tech): create a project, or run `npx neon@latest init` / `neon env pull` | Pick region `aws-us-east-1`, `aws-us-east-2`, `aws-eu-central-1` or `aws-ap-southeast-1` so the AI Gateway works too | ☐ |
-| 2 | **Exa** | `EXA_API_KEY` | [dashboard.exa.ai/api-keys](https://dashboard.exa.ai/api-keys) | Powers the live price scan and the yearly number | ☐ |
-| 3 | **An LLM**: Neon AI Gateway | `NEON_AI_GATEWAY_TOKEN`, `NEON_AI_GATEWAY_BASE_URL`, `LLM_MODEL_FAST`, `LLM_MODEL_CHAT` | Neon console, AI Gateway; or `neon credentials create --scope ai_gateway:invoke` | Requires a **paid Neon plan with prepaid credits** and a supported region (see #1). Check this first | ☐ |
-| 3b | **or** a fallback LLM key | `OPENAI_API_KEY` (and `OPENAI_BASE_URL` if not OpenAI) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) or any OpenAI-compatible provider | Only if the Gateway is not available. Shown as "fallback" on the status page | ☐ |
-| 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Price verification and checkout with live view | ☐ |
-| 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to): create a key, then create an inbox and copy its ID | The inbox you forward receipts to. Also set `BRIEFING_TO_EMAIL` to your own address | ☐ |
-| 6 | **Fly.io Sprites** | `SPRITES_TOKEN` | [sprites.dev](https://sprites.dev) (Fly.io account), create an API token | **Needed by 1:30 PM** so the worker is watching prices by 1:45 and the demo has real history | ☐ |
+| 2 | **Exa** | `EXA_API_KEY` | [dashboard.exa.ai/api-keys](https://dashboard.exa.ai/api-keys) | Powers the live price scan and the yearly number. ✅ verified with a live search | ✅ |
+| 3 | **OpenAI** (default LLM) | `OPENAI_API_KEY` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Default for every model call (`gpt-4o-mini`). ✅ provided | ✅ |
+| 3b | **OpenRouter** (fallback LLM) | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) | Used automatically when OpenAI is rate-limited or down, through the free router (`openrouter/free`). ✅ provided | ✅ |
+| 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Key works, but **not used**. The app shows a link to the offer and does not buy it | — |
+| 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to) | ✅ verified. Inbox `signal-os-concierge@agentmail.to`. Receipts can be forwarded there | ✅ |
+| 6 | **Fly.io** | `FLY_API_TOKEN` | [fly.io/dashboard/personal/tokens](https://fly.io/dashboard/personal/tokens) | ✅ verified. Org `personal` (Stefano94120). This is a Fly token, not a Sprites token | ✅ |
+| 6b | **Sprites** | org `stefano94120` | Signed in on this machine | ✅ Sprite `buyer-worker` is up at https://buyer-worker-b3y4b.sprites.app | ✅ |
 
 ## 2. Set up, but no key to paste
 
 | Service | What to do | Status |
 |---|---|---|
 | **Executor** (v1) | Nothing to sign up for: it runs locally (`npm i -g executor && executor install && executor web`, port 4788). The backend agent sets it up; you run the same on the demo laptop | ☐ |
-| **Kernel Vault** (payment) | In the Kernel dashboard, create a Vault item with a **low-limit** card. Put the item's name in `KERNEL_VAULT_PAYMENT_ITEM`. Only needed for the final `place` run; `review` mode never pays | ☐ |
-| **Laya** | On the demo laptop: download the weights now on fast Wi-Fi (about 2.3 GB, see `.claude/skills/laya-integration/SKILL.md`), then run offline with `HF_HUB_OFFLINE=1` | ☐ |
+| **Kernel Vault** (payment) | Not needed. There is no checkout | — |
+| **Laya** | Not used. Receipt triage is Jev on OpenRouter (`typesafe/jev-1.13`), so no local weights | — |
 | **CodeRabbit** | Already installed. Comment `@coderabbitai full review` on each PR from your own account | ✅ |
 | **assistant-ui, Mastra** | Open source, no key | ✅ |
 
