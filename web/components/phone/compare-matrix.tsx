@@ -35,6 +35,7 @@ export function CompareMatrix({
   household,
   stores,
   onRetake,
+  intent = "receipt",
 }: {
   line: ReceiptLine | null;
   retailer: string;
@@ -42,6 +43,8 @@ export function CompareMatrix({
   household?: Household;
   stores: StoreSelection;
   onRetake: () => void;
+  /** A typed search has no amount paid, so the savings block stays hidden. */
+  intent?: "receipt" | "search";
 }) {
   const [offers, setOffers] = useState<ComparedOffer[] | null>(null);
   const [jev, setJev] = useState<"live" | "unavailable">("unavailable");
@@ -123,11 +126,14 @@ export function CompareMatrix({
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <div className="flex min-w-0 flex-col gap-1">
-        <p className="break-words text-small text-ink-soft">{retailer ? `Bought at ${retailer}` : "From the receipt"}</p>
+        <p className="break-words text-small text-ink-soft">
+          {intent === "search" ? "Across your stores" : retailer ? `Bought at ${retailer}` : "From the receipt"}
+        </p>
         <h2 className="type-heading break-words text-[1.75rem] text-ink">{line.name}</h2>
-        {source === "sample" && <p className="text-micro font-semibold text-ink-soft">Sample data</p>}
+        {source === "sample" && intent !== "search" && <p className="text-micro font-semibold text-ink-soft">Sample data</p>}
       </div>
 
+      {intent !== "search" && (
       <section aria-label="Savings" className="flex min-w-0 flex-col gap-4">
         <div className="min-w-0">
           <p className="text-small text-ink-soft">Save this year</p>
@@ -177,6 +183,7 @@ export function CompareMatrix({
           </div>
         )}
       </section>
+      )}
 
       {error && (
         <p role="alert" className="rounded-card bg-carmine-wash px-3 py-3 text-small text-carmine">
