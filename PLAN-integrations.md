@@ -21,7 +21,7 @@ Branch: `cursor/integrations-5766`. Small PRs into `main` at every gate.
 
 ## Skills and docs
 
-- **Read before coding** (in `.claude/skills/`): `kernel-typescript-sdk`, `sprites`, `neon-postgres`. For AgentMail, install the official skill into your VM only (its repo has no license, so it is not committed): `npx skills add agentmail-to/agentmail-skills --skill agentmail -g -y`. Do not commit anything it writes.
+- **Read before coding** (in `.claude/skills/`): `kernel-typescript-sdk`, `sprites`, `neon-postgres`, and the AgentMail skills `agentmail`, `agentmail-toolkit`, `agentmail-send-email`, `agentmail-check-email`, `agentmail-manage-inboxes`, `agentmail-mcp`, `agentmail-cli`.
 - Kernel: [live view](https://kernel.sh/docs/browsers/live-view.md), [vault fill](https://kernel.sh/docs/vaults/fill.md), [payments](https://kernel.sh/docs/browsers/payments.md). A completed fill is not proof of payment: check the order-review total in code. The org is now `kernel`; ignore the deprecated `@onkernel/create-kernel-app`.
 - Sprites: [keeping Sprites running](https://docs.fly.io/sprites/keeping-sprites-running.md). AgentMail: [WebSocket quickstart](https://docs.agentmail.to/websockets/quickstart.md); examples in `agentmail-to/agentmail-examples` pin `agentmail ^0.4` (current 0.5.x), so use them for patterns only.
 
