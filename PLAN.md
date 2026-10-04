@@ -81,6 +81,7 @@ Principles:
 
 ```
 contract/       Shared Zod schemas, landed-cost math, sample fixtures (the frontend/backend interface)
+integrations/   @buyer/integrations: Kernel, AgentMail, Laya client (behind contract/src/integrations.ts)
 agent/          Mastra server: agents, tools, workflows, API routes, units + landed-cost code
 web/            Next.js app: landing, dashboard, chat, trace panel
 worker/         Price watches + daily briefing (runs locally or on a Sprite)
@@ -195,10 +196,22 @@ Never cut: the receipt-to-number path, the approval gate, Kernel live view, the 
 
 ### Work split
 
-Two agents run in parallel on separate branches. The human is a solo owner and merges at each gate.
+Three builder agents run in parallel from 12:00, plus a release agent from 2:45. The human is a solo owner: merges PRs at each gate, relays bug reports, and does the tasks only a person can do.
 
-| Agent | Plan | Owns | Branch |
-|---|---|---|---|
+| Agent | Plan | Owns | Branch | Starts |
+|---|---|---|---|---|
+| Frontend (UI) | [PLAN-frontend.md](PLAN-frontend.md) | `web/` | `cursor/frontend-ui-5766` | 12:00 |
+| Backend-core (API, data, pipeline, agent, Executor) | [PLAN-backend.md](PLAN-backend.md) | `agent/`, `db/`, `seed/`, preflight, CodeRabbit config | `cursor/backend-core-5766` | 12:00 |
+| Integrations (Kernel, Sprite worker, AgentMail, Laya) | [PLAN-integrations.md](PLAN-integrations.md) | `integrations/`, `worker/`, `laya-sidecar/` | `cursor/integrations-5766` | 12:00 |
+| Release (test, rehearse, docs, submission) | [PLAN-release.md](PLAN-release.md) | `README.md`, `techStack.md`, `docs/` | `cursor/release-5766` | 2:45 |
+
+Nobody waits on anybody. [CONTRACT.md](CONTRACT.md) defines three seams: REST and chat (`contract/src/index.ts`), integration functions (`contract/src/integrations.ts`), and the database (`db/schema.sql`). Each side builds against stubs or sample fixtures first and swaps in the real thing with no change in shape.
+
+Why this split: the original single backend agent held both the critical path (the yearly number) and the four slowest, flakiest integrations, including the 1:45 PM Sprite deadline, all in sequence. Moving Kernel, the Sprite worker, AgentMail and Laya to their own agent lets the Sprite go live on time and lets Kernel checkout get the trial and error it needs without stalling the pipeline. More agents than this would cost more in merge conflicts and review time than they save.
+
+Human tasks, in order: merge PR #2 now; add sponsor keys as Cursor Cloud Agent secrets; start the three builders with their kickoff prompts; download the Laya weights on the demo laptop; forward real receipts by 2:00; create the Kernel Vault; merge at each gate and trigger `@coderabbitai full review` on each PR; start the release agent at 2:45; design review at 3:15; submit by 4:15.
+
+---|---|---|---|
 | Frontend (UI) | [PLAN-frontend.md](PLAN-frontend.md) | `web/` | `cursor/frontend-ui-5766` |
 | Backend (agent, data, integrations) | [PLAN-backend.md](PLAN-backend.md) | `agent/`, `worker/`, `db/`, `seed/`, `laya-sidecar/`, preflight, CodeRabbit config | `cursor/backend-core-5766` |
 
@@ -304,10 +317,10 @@ Defaults below are what the plan assumes. Change them only deliberately.
 | Inbound email | AgentMail WebSocket (no public URL needed) | After Spike D |
 | Spend controls | Per-purchase cap (`SPEND_CAP_USD`, default 25), merchant allowlist, offer-hash match, server-side approval check | Locked |
 | Checkout mode | `review` until two clean rehearsals, then `place` | 3:30 PM |
-| Checkout merchant | A guest-checkout merchant (no account or login), proposed by the backend agent with a delivered cost at most the spend cap; human confirms | 1:30 PM |
+| Checkout merchant | A guest-checkout merchant (no account or login), proposed by the integrations agent with a delivered cost at most the spend cap; human confirms | 1:30 PM |
 | Product name | Keep "Personal Professional Buyer" in the repo; pick a short brand name for the UI. Suggestion: **Margin** | 3:30 PM, so the wordmark can be built |
-| Team size | **Solo**, with two parallel cloud agents (frontend and backend) | Decided |
-| Frontend/backend interface | `contract/` package and [CONTRACT.md](CONTRACT.md); approve/decline always go through REST | Locked |
+| Team size | **Solo**, with three parallel builder agents (frontend, backend-core, integrations) and a release agent from 2:45 | Decided |
+| Agent interfaces | `contract/` package, `db/schema.sql` and [CONTRACT.md](CONTRACT.md); approve/decline always go through REST | Locked |
 | Env var names | Align with Neon's CLI output (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`) rather than `NEON_DATABASE_URL` in PR #1 | G0 |
 
 ## 11. Out of scope today

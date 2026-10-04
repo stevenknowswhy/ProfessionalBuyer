@@ -71,13 +71,23 @@ PLAN-backend.md). They meet at `contract/` (Zod schemas, landed-cost math, sampl
 CONTRACT.md. The backend serves fixtures first so the frontend never waits. Approve and decline always
 go through REST, so how the backend resumes the Mastra agent never affects the UI.
 
-## 2026-10-04 ~12:00 — Checkout merchant is proposed by the backend agent
+## 2026-10-04 ~12:00 — Checkout merchant is proposed by the integrations agent
 
 "Guest checkout" means buying without an account, login or 2FA. Big retailers need those, which a
-cloud browser handles badly. The backend agent shortlists three guest-checkout merchants with a demo
+cloud browser handles badly. The integrations agent shortlists three guest-checkout merchants with a demo
 item at or under the spend cap, and the human confirms. `CHECKOUT_MODE=review` is the default.
 
 ## 2026-10-04 ~12:00 — Cadence formula corrected
 
 `buys_per_year = (n - 1) / span_days * 365`. n purchases span n-1 intervals; the earlier `n / days`
 overstated the rate (most for items with few purchases). Implemented once in `contract/src/landed-cost.ts`.
+
+## 2026-10-04 ~12:05 — Three builder agents plus a late release agent
+
+Reviewed the two-agent split against the goals. The backend agent held the critical path (receipt to
+yearly number) and the four slowest integrations (Kernel checkout, Sprite worker with a 1:45 PM deadline,
+AgentMail, Laya) in sequence, while the frontend load was a single coherent job. Split the backend into
+backend-core and integrations, joined by `contract/src/integrations.ts` and a frozen `db/schema.sql`.
+Kept one frontend agent (design coherence matters more than speed for Best UI). Added a release agent
+at 2:45 for testing, rehearsals and docs. Rejected more agents: one human reviewing and merging PRs is
+the real bottleneck, and lockfile and ownership conflicts grow with each agent.

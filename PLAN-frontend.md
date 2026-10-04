@@ -2,7 +2,7 @@
 
 Written Sun Oct 4, ~12:00 PM PT. Submissions close **4:30 PM PT**. Feature freeze 4:00 PM.
 Read first: [PLAN.md](PLAN.md) (section 8, "UI direction: the Awwwards bar", is your brief), [CONTRACT.md](CONTRACT.md) (the interface you consume), [techStack.md](techStack.md) (assistant-ui wiring).
-Counterpart: [PLAN-backend.md](PLAN-backend.md). You never wait for it, and it never waits for you.
+Counterparts, running in parallel: [PLAN-backend.md](PLAN-backend.md) (core API) and [PLAN-integrations.md](PLAN-integrations.md) (Kernel, Sprite worker, AgentMail, Laya). You only ever talk to the core API. You never wait for either. A release agent ([PLAN-release.md](PLAN-release.md)) joins at 2:45 to test and report bugs to you.
 
 ## Mission
 
@@ -10,7 +10,7 @@ Build the interface so that it looks like an Awwwards submission and carries the
 
 ## Owns
 
-`web/` only. Reads `contract/` ([change rules](CONTRACT.md#changing-the-contract)). Never edit `agent/`, `worker/`, `db/`, `seed/`.
+`web/` only. Reads `contract/` ([change rules](CONTRACT.md#changing-the-contract)). Never edit `agent/`, `integrations/`, `worker/`, `db/`, `seed/`.
 
 Branch: `cursor/frontend-ui-5766`. Open small PRs into `main` at every gate. Do not let a branch sit unmerged for more than 45 minutes.
 
@@ -103,7 +103,7 @@ You are the FRONTEND agent for "Personal Professional Buyer", a hackathon app du
 
 Read, in this order: PLAN-frontend.md (your plan), CONTRACT.md (the interface), PLAN.md section 8 (design direction), techStack.md (assistant-ui wiring), contract/src/index.ts and contract/fixtures/*.sample.json.
 
-Work on branch cursor/frontend-ui-5766, branched from main. Do not edit agent/, worker/, db/ or seed/. Another agent builds the backend in parallel and must not break the contract.
+Work on branch cursor/frontend-ui-5766, branched from main. Do not edit anything outside web/ except additive contract changes per CONTRACT.md. Two other agents build the backend in parallel (core API and integrations); you only talk to the core API.
 
 Build web/ so it runs fully on the sample fixtures with no backend, with one env var (NEXT_PUBLIC_API_BASE) to switch to the real API. Start with F0: shell, design tokens, three-zone layout, the fixture data layer and a /dev gallery, and open a PR immediately. Then follow the timeline. Never compute or type a dollar figure: display what the contract provides. Open small PRs at every gate.
 ```

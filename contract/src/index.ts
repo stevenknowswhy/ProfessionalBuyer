@@ -264,3 +264,4 @@ export const ENDPOINTS = {
   sendBriefing: { method: "POST", path: "/api/briefing/send", response: z.object({ sent: z.boolean(), to: z.string() }) },
 } as const;
 export type EndpointName = keyof typeof ENDPOINTS;
+export type * from "./integrations";

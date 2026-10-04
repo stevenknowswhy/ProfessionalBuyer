@@ -1,6 +1,12 @@
 # Contract between frontend and backend
 
-The frontend agent ([PLAN-frontend.md](PLAN-frontend.md)) and the backend agent ([PLAN-backend.md](PLAN-backend.md)) never talk to each other directly. They meet at this contract.
+Three builder agents run in parallel and never talk to each other directly: frontend ([PLAN-frontend.md](PLAN-frontend.md)), backend-core ([PLAN-backend.md](PLAN-backend.md)) and integrations ([PLAN-integrations.md](PLAN-integrations.md)). A release agent ([PLAN-release.md](PLAN-release.md)) joins at 2:45. They meet at this contract, which has three seams:
+
+| Seam | Between | Defined in |
+|---|---|---|
+| REST and chat | frontend and core | `contract/src/index.ts` (`ENDPOINTS`, `ToolResults`) |
+| Integration functions | core and integrations | `contract/src/integrations.ts` (`Integrations`) |
+| Database | core and the Sprite worker | `db/schema.sql` (Neon is the shared bus) |
 
 - **Schemas and types:** [`contract/src/index.ts`](contract/src/index.ts) (Zod). Both sides import `@buyer/contract`.
 - **Landed-cost math:** [`contract/src/landed-cost.ts`](contract/src/landed-cost.ts). The only place these formulas exist. The backend calls them; the UI never recomputes a dollar figure, it displays what it is sent.
@@ -75,10 +81,12 @@ How the backend resumes the Mastra agent (native `requireApproval` and `approveT
 
 | Path | Owner | Others |
 |---|---|---|
-| `web/` | Frontend agent | Backend must not edit |
-| `agent/`, `worker/`, `db/`, `seed/`, `laya-sidecar/`, `.env.example` | Backend agent | Frontend must not edit |
+| `web/` | Frontend agent | Nobody else edits |
+| `agent/`, `db/`, `seed/`, `.env.example`, `scripts/preflight.ts`, `.coderabbit.yaml` | Backend-core agent | Nobody else edits |
+| `integrations/`, `worker/`, `laya-sidecar/` | Integrations agent | Nobody else edits |
 | `contract/` | Shared: see below | |
-| `README.md`, `techStack.md`, `PLAN*.md`, `CONTRACT.md` | The human (solo owner) | Agents propose edits in their PR description |
+| `README.md`, `techStack.md`, `docs/` | Release agent from 2:45; the human before that | Builders propose text in their PR descriptions |
+| `PLAN*.md`, `CONTRACT.md`, `DECISIONS.md` | The human (solo owner) | |
 
 ## Changing the contract
 
@@ -88,3 +96,9 @@ The contract is what lets two agents work in parallel, so changes must be cheap 
 2. **Breaking changes** (rename, remove, retype, make a field required) require the human's OK in the PR. Avoid them. After 2:30 PM do not make any.
 3. Never fork the contract by redefining types locally. If a type is missing, add it here first.
 4. Never hand-edit `fixtures/*.sample.json`. Edit `scripts/generate-fixtures.ts` and regenerate.
+
+## Shared files that conflict
+
+- **`pnpm-lock.yaml`:** every agent that adds a dependency changes it. On a merge conflict, never hand-merge it: take `main`'s version, run `pnpm install`, commit the result.
+- **`pnpm-workspace.yaml`** already lists every package (`contract`, `agent`, `integrations`, `web`, `worker`). Do not edit it.
+- **Root `package.json`:** add scripts only, one line each, to reduce conflicts.
