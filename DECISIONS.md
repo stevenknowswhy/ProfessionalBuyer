@@ -118,3 +118,17 @@ server error, or the key is missing, the same request is retried through OpenRou
 free model that supports the request's features, such as tool calling and structured output. The trace
 and the status page record which provider answered. Both keys were verified with a live completion on
 Oct 4.
+
+## 2026-10-04 ~14:10 — No purchases, mock data, Jev instead of Laya
+
+The app does not buy anything. Kernel checkout, the Kernel Vault, and live-browser verification are out.
+Each offer keeps its URL, and the UI surfaces that link. The person buys it themselves if they want to.
+
+Demo data is the sample fixtures in `contract/fixtures`. Figures stay labeled "Sample data". Live Exa
+search can still fill offers later, but the demo does not depend on it.
+
+Receipt triage uses Jev on OpenRouter, model `typesafe/jev-1.13`, through
+`POST https://openrouter.ai/api/alpha/decisions` with the existing `OPENROUTER_API_KEY`. A sample
+receipt scored `is_receipt` 0.95. Jev returns a probability, not prose, which is the job Laya had.
+No local model download. `typesafe/jev-router` is a different product (it picks a chat model) and is
+not used for triage.

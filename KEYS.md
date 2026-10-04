@@ -14,8 +14,8 @@ Check the hackathon page and sponsor tables for credit codes before paying for a
 | 2 | **Exa** | `EXA_API_KEY` | [dashboard.exa.ai/api-keys](https://dashboard.exa.ai/api-keys) | Powers the live price scan and the yearly number. ✅ verified with a live search | ✅ |
 | 3 | **OpenAI** (default LLM) | `OPENAI_API_KEY` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Default for every model call (`gpt-4o-mini`). ✅ provided | ✅ |
 | 3b | **OpenRouter** (fallback LLM) | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) | Used automatically when OpenAI is rate-limited or down, through the free router (`openrouter/free`). ✅ provided | ✅ |
-| 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Price verification and checkout with live view | ☐ |
-| 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to): create a key, then create an inbox and copy its ID | The inbox you forward receipts to. Also set `BRIEFING_TO_EMAIL` to your own address | ☐ |
+| 4 | **Kernel** | `KERNEL_API_KEY` | [dashboard.onkernel.com](https://dashboard.onkernel.com), API keys | Key works, but **not used**. The app shows a link to the offer and does not buy it | — |
+| 5 | **AgentMail** | `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` | [console.agentmail.to](https://console.agentmail.to) | ✅ verified. Inbox `signal-os-concierge@agentmail.to`. Receipts can be forwarded there | ✅ |
 | 6 | **Fly.io** | `FLY_API_TOKEN` | [fly.io/dashboard/personal/tokens](https://fly.io/dashboard/personal/tokens) | ✅ verified. Org `personal` (Stefano94120). This is a Fly token, not a Sprites token | ✅ |
 | 6b | **Sprites** | `SPRITES_TOKEN` | [sprites.dev/account](https://sprites.dev/account) | Still needed. A Fly token is rejected by `api.sprites.dev`. Mint an org token there (shape `org/id/token-id/secret`) | ☐ |
 
@@ -24,8 +24,8 @@ Check the hackathon page and sponsor tables for credit codes before paying for a
 | Service | What to do | Status |
 |---|---|---|
 | **Executor** (v1) | Nothing to sign up for: it runs locally (`npm i -g executor && executor install && executor web`, port 4788). The backend agent sets it up; you run the same on the demo laptop | ☐ |
-| **Kernel Vault** (payment) | In the Kernel dashboard, create a Vault item with a **low-limit** card. Put the item's name in `KERNEL_VAULT_PAYMENT_ITEM`. Only needed for the final `place` run; `review` mode never pays | ☐ |
-| **Laya** | On the demo laptop: download the weights now on fast Wi-Fi (about 2.3 GB, see `.claude/skills/laya-integration/SKILL.md`), then run offline with `HF_HUB_OFFLINE=1` | ☐ |
+| **Kernel Vault** (payment) | Not needed. There is no checkout | — |
+| **Laya** | Not used. Receipt triage is Jev on OpenRouter (`typesafe/jev-1.13`), so no local weights | — |
 | **CodeRabbit** | Already installed. Comment `@coderabbitai full review` on each PR from your own account | ✅ |
 | **assistant-ui, Mastra** | Open source, no key | ✅ |
 

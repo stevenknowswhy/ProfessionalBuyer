@@ -320,8 +320,8 @@ Defaults below are what the plan assumes. Change them only deliberately.
 | Database access | Plain SQL + `pg` for app tables, `PostgresStore` for Mastra | Locked |
 | Inbound email | AgentMail WebSocket (no public URL needed) | After Spike D |
 | Spend controls | Per-purchase cap (`SPEND_CAP_USD`, default 25), merchant allowlist, offer-hash match, server-side approval check | Locked |
-| Checkout mode | `review` until two clean rehearsals, then `place` | 3:30 PM |
-| Checkout merchant | A guest-checkout merchant (no account or login), proposed by the integrations agent with a delivered cost at most the spend cap; human confirms | 1:30 PM |
+| Purchases | **None.** The app shows the offer and its link. No Kernel checkout and no Vault | Decided |
+| Demo data | Sample fixtures in `contract/fixtures`, labeled Sample data. Live Exa is optional | Decided |
 | Product name | Keep "Personal Professional Buyer" in the repo; pick a short brand name for the UI. Suggestion: **Margin** | 3:30 PM, so the wordmark can be built |
 | Team size | **Solo**, with three parallel builder agents (frontend, backend-core, integrations) and a release agent from 2:45 | Decided |
 | Agent interfaces | `contract/` package, `db/schema.sql` and [CONTRACT.md](CONTRACT.md); approve/decline always go through REST | Locked |
