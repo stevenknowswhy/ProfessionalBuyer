@@ -4,7 +4,7 @@ import { registerApiRoute } from "@mastra/core/server";
 import { HttpError } from "../errors";
 import { fixtures } from "../fixtures";
 import { integrationsStub as integrations } from "../integrations-stub";
-import { usingStubModel } from "./agents/buyer";
+import { chatModelLabel, chatProvider, usingStubModel } from "./agents/buyer";
 
 const TRACE_REPLAY_INTERVAL_MS = 400;
 const SSE_HEARTBEAT_MS = 15_000;
@@ -34,8 +34,10 @@ async function health(): Promise<Health> {
           return {
             sponsor,
             status: usingStubModel ? "degraded" : "green",
-            note: usingStubModel ? "server up; no LLM key, chat uses the canned stub model" : "server up",
-            usingFallback: usingStubModel,
+            note: usingStubModel
+              ? "server up; no LLM key, chat uses the canned stub model"
+              : `server up; chat via ${chatModelLabel}${chatProvider === "openrouter" ? " (OpenRouter fallback)" : ""}`,
+            usingFallback: usingStubModel || chatProvider === "openrouter",
           };
         case "assistant-ui":
           return { sponsor, status: "green", note: "frontend library; nothing for the backend to check", usingFallback: false };

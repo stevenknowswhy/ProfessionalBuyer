@@ -10,11 +10,14 @@ CREATE TABLE IF NOT EXISTS receipts (
   received_at      timestamptz NOT NULL DEFAULT now(),
   raw_text         text NOT NULL,
   is_receipt       boolean NOT NULL,
-  triage_via       text NOT NULL CHECK (triage_via IN ('laya', 'llm')),
+  triage_via       text NOT NULL CHECK (triage_via IN ('laya', 'llm', 'jev')),
   triage_confidence real NOT NULL,
   reconciled       boolean NOT NULL DEFAULT false,
   total_cents      integer NOT NULL DEFAULT 0
 );
+-- CREATE TABLE IF NOT EXISTS does not update an existing check. Widen it so a Jev result can be stored.
+ALTER TABLE receipts DROP CONSTRAINT IF EXISTS receipts_triage_via_check;
+ALTER TABLE receipts ADD CONSTRAINT receipts_triage_via_check CHECK (triage_via IN ('laya', 'llm', 'jev'));
 
 CREATE TABLE IF NOT EXISTS items (
   id                text PRIMARY KEY,

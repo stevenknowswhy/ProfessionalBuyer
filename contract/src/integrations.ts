@@ -65,16 +65,16 @@ export interface Mail {
 }
 
 export interface Triage {
-  /** Laya sidecar when healthy, LLM fallback otherwise. `via` says which ran. */
+  /** Jev on OpenRouter when configured, then an LLM, then a keyword heuristic. `via` says which ran. */
   isReceipt(
     text: string,
     emit: EmitTrace,
   ): Promise<{
     isReceipt: boolean;
     confidence: number;
-    via: "laya" | "llm";
-    /** What actually ran. "heuristic" (keyword rules, no model) is a labeled last resort when neither Laya nor an LLM is available. */
-    method?: "laya" | "llm" | "heuristic";
+    via: "jev" | "laya" | "llm";
+    /** What actually ran. "heuristic" (keyword rules, no model) is a labeled last resort when neither Jev nor an LLM is available. */
+    method?: "jev" | "laya" | "llm" | "heuristic";
     usingFallback?: boolean;
   }>;
 }

@@ -1,0 +1,26 @@
+{
+  "name": "worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx src/index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/index.js --banner:js=\"import{createRequire}from'module';const require=createRequire(import.meta.url);\"",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/*.test.ts",
+    "deploy:sprite": "node --import tsx scripts/deploy-sprite.ts"
+  },
+  "dependencies": {
+    "@buyer/contract": "workspace:*",
+    "@buyer/integrations": "workspace:*",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@fly/sprites": "^0.2.3",
+    "@types/node": "^26.6.4",
+    "@types/pg": "^8.23.1",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

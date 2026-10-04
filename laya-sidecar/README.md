@@ -1,10 +1,12 @@
 # Laya sidecar
 
-Local decision service for the Personal Professional Buyer. Laya is a small
-(~400M param) open-source model that answers typed yes/no/choice questions about
-text in ~30ms with no LLM call and no data leaving the machine. It sits in front
-of the agent as a cheap "System 1": triage, guardrails, significance scoring.
-Anything below the confidence threshold cascades to the LLM or human approval.
+Not used. Receipt triage is Jev, model `typesafe/jev-1.13`, via
+`POST https://openrouter.ai/api/alpha/decisions` and `OPENROUTER_API_KEY`
+(`integrations/src/triage.ts`). Do not start this process for the demo.
+`typesafe/jev-router` is a different product and is not the triage model.
+
+The notes below describe the old local sidecar, kept so the question wording
+stays next to the code that used to call it.
 
 ## Run
 

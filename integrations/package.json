@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test src/*.test.ts",
     "check": "pnpm typecheck && pnpm test",
-    "health": "node --import tsx scripts/health.ts"
+    "health": "node --import tsx scripts/health.ts",
+    "inbox": "node --import tsx src/inbox.ts"
   },
   "dependencies": {
     "@buyer/contract": "workspace:*",

@@ -4,11 +4,17 @@ import { env } from "./env";
 import { emitFallback, errorMessage, safeEmit, shortHash, traced } from "./trace";
 
 export const FALLBACK_INBOX = "not-configured@agentmail.invalid";
+/** The agent's mailbox. People forward receipts here. */
+export const AGENT_INBOX = "signal-os-concierge@agentmail.to";
 const POLL_MS = 5_000;
 
 export function createMail(): Mail {
   return {
-    inboxAddress: () => env.agentmailInboxId() ?? FALLBACK_INBOX,
+    inboxAddress: () => {
+      const id = env.agentmailInboxId();
+      if (!id) return FALLBACK_INBOX;
+      return id.includes("@") ? id : AGENT_INBOX;
+    },
     onInbound: (handler, emit) => (mailConfigured() ? realOnInbound(handler, emit) : fallbackOnInbound(emit)),
     send: (msg, emit) => (mailConfigured() ? realSend(msg, emit) : fallbackSend(msg, emit)),
   };

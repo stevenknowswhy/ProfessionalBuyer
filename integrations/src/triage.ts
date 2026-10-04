@@ -4,22 +4,36 @@ import { emitFallback, errorMessage, traced } from "./trace";
 
 type TriageResult = Awaited<ReturnType<Triage["isReceipt"]>>;
 
-/** Mirrors TRIAGE_QUESTIONS.is_receipt in laya-sidecar/questions.py. */
-export const LAYA_RECEIPT_QUESTION = {
-  is_receipt: { type: "noul", instructions: "Was something bought, ordered, or shipped according to this text?" },
+/** Same perception question the sidecar used. Jev answers it on OpenRouter. */
+export const JEV_RECEIPT_QUESTION = {
+  is_receipt: {
+    type: "noul",
+    instructions: "Was something bought, ordered, or shipped according to this text?",
+    criteria: {
+      true: "A purchase receipt, order confirmation, invoice, or shipping notice.",
+      false: "Not a receipt: conversation, newsletter, or unrelated mail.",
+    },
+  },
 } as const;
-/** From laya-sidecar/questions.py: is_receipt >= 0.80 -> parse as receipt. */
-export const LAYA_RECEIPT_THRESHOLD = 0.8;
+/** is_receipt >= 0.80 -> treat the message as a receipt. */
+export const JEV_RECEIPT_THRESHOLD = 0.8;
+export const JEV_MODEL = "typesafe/jev-1.13" as const;
+export const JEV_DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions";
+
+/** Always the decision model. `typesafe/jev-router` picks a chat model and is not triage. */
+export function jevRequestModel(): typeof JEV_MODEL {
+  return JEV_MODEL;
+}
 
 export function createTriage(): Triage {
   return {
     async isReceipt(text, emit) {
-      const layaUrl = env.layaUrl();
-      if (layaUrl) {
+      const key = env.openrouterApiKey();
+      if (key) {
         try {
-          return await layaIsReceipt(layaUrl, text, emit);
+          return await jevIsReceipt(key, text, emit);
         } catch (err) {
-          emitFallback(emit, "laya", "receipt triage", `Laya sidecar unavailable: ${errorMessage(err)}`);
+          emitFallback(emit, "laya", "receipt triage", `Jev unavailable: ${errorMessage(err)}`);
         }
       }
       const llm = env.llm();
@@ -30,28 +44,37 @@ export function createTriage(): Triage {
           // Traced inside; fall through to the heuristic.
         }
       }
-      const reason = !layaUrl && !llm ? "LAYA_URL and LLM keys not set" : "Laya and LLM both failed";
+      const reason = !key && !llm ? "OPENROUTER_API_KEY and LLM keys not set" : "Jev and LLM both failed";
       emitFallback(emit, "laya", "receipt triage (keyword heuristic)", reason);
       return heuristicIsReceipt(text);
     },
   };
 }
 
-async function layaIsReceipt(baseUrl: string, text: string, emit: EmitTrace): Promise<TriageResult> {
-  const body = await traced(emit, "laya", "receipt triage", async () => {
-    const res = await fetch(new URL("/predict", baseUrl), {
+async function jevIsReceipt(apiKey: string, text: string, emit: EmitTrace): Promise<TriageResult> {
+  const model = jevRequestModel();
+  const body = await traced(emit, "laya", "receipt triage via Jev", async () => {
+    const res = await fetch(JEV_DECISIONS_URL, {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ state: text.slice(0, 4000), questions: LAYA_RECEIPT_QUESTION }),
-      signal: AbortSignal.timeout(3_000),
+      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        state: text.slice(0, 8000),
+        questions: JEV_RECEIPT_QUESTION,
+      }),
+      signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as { answers?: { is_receipt?: { noul?: number } } };
-  }, (b) => ({ pTrue: b.answers?.is_receipt?.noul ?? null }));
+    return (await res.json()) as {
+      model?: string;
+      answers?: { is_receipt?: { noul?: number } };
+    };
+  }, (b) => ({ model, served: b.model ?? null, pTrue: b.answers?.is_receipt?.noul ?? null }));
+  if (body.model?.includes("jev-router")) throw new Error("refusing typesafe/jev-router response");
   const p = body.answers?.is_receipt?.noul;
-  if (typeof p !== "number") throw new Error("Laya response missing answers.is_receipt.noul");
-  const isReceipt = p >= LAYA_RECEIPT_THRESHOLD;
-  return { isReceipt, confidence: isReceipt ? p : 1 - p, via: "laya", method: "laya" };
+  if (typeof p !== "number") throw new Error("Jev response missing answers.is_receipt.noul");
+  const isReceipt = p >= JEV_RECEIPT_THRESHOLD;
+  return { isReceipt, confidence: Number((isReceipt ? p : 1 - p).toFixed(4)), via: "jev", method: "jev" };
 }
 
 async function llmIsReceipt(
@@ -59,7 +82,7 @@ async function llmIsReceipt(
   text: string,
   emit: EmitTrace,
 ): Promise<TriageResult> {
-  // The trace sponsor stays "laya": this is the Laya step's fallback. `detail.via` says an LLM ran.
+  // The trace sponsor stays "laya": this is the triage step's fallback. `detail.via` says an LLM ran.
   const parsed = await traced(emit, "laya", "receipt triage via LLM", async () => {
     const res = await fetch(`${llm.baseUrl.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
@@ -92,7 +115,7 @@ const STRONG = [/order (confirmation|#|number)/i, /\breceipt\b/i, /\binvoice\b/i
 const WEAK = [/\bsubtotal\b/i, /\btotal\b/i, /\bqty\b|quantity/i, /\$\s?\d+\.\d{2}/, /\btax\b/i];
 
 /**
- * Keyword rules, no model. `via` stays in the contract's "llm" slot (the non-Laya path); `method: "heuristic"`
+ * Keyword rules, no model. `via` stays in the contract's "llm" slot (the non-Jev path); `method: "heuristic"`
  * and `usingFallback` say what really ran.
  */
 export function heuristicIsReceipt(text: string): TriageResult {

@@ -75,7 +75,7 @@ export const Receipt = z.object({
   source: z.enum(["agentmail", "seed"]),
   retailer: z.string(),
   receivedAt: Iso,
-  triage: z.object({ isReceipt: z.boolean(), via: z.enum(["laya", "llm"]), confidence: z.number() }),
+  triage: z.object({ isReceipt: z.boolean(), via: z.enum(["laya", "llm", "jev"]), confidence: z.number() }),
   reconciled: z.boolean(),
   totalCents: Cents,
 });

@@ -1,20 +1,24 @@
 import { Agent } from "@mastra/core/agent";
-import { createStubModel } from "../stub-model";
+import { resolveChatModel } from "../chat-model";
 import { showSavings } from "../tools/show-savings";
 
-/** `provider/model` router id. Unset means no LLM is available and the deterministic stub runs instead. */
-const chatModelId = process.env.LLM_MODEL_CHAT?.trim();
+const chat = resolveChatModel();
 
-export const usingStubModel = !chatModelId;
+export const usingStubModel = chat.usingStub;
+export const chatProvider = chat.provider;
+export const chatModelLabel = chat.label;
 
 export const buyerAgent = new Agent({
   id: "buyer",
   name: "Personal Professional Buyer",
   instructions: [
     "You are a household's personal professional buyer.",
+    "The savings figures you can show come from sample fixtures. Call them sample data.",
     "Never state a dollar figure in prose unless the same figure is in a tool result you returned in this turn.",
-    "Use showSavings to present the household's yearly savings number.",
+    "On every question about savings, prices, or the yearly number, call showSavings before you answer.",
+    "Do not offer to buy, check out, or place an order. Offers are a price plus a URL.",
   ].join("\n"),
-  model: chatModelId ?? createStubModel(),
+  model: chat.model,
   tools: { showSavings },
+  defaultOptions: { maxSteps: 4 },
 });
