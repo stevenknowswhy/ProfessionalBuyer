@@ -1,87 +1,132 @@
 /**
- * Deploys the worker to a Fly Sprite and runs it as a supervised service.
+ * Points the existing buyer-worker Sprite at this worker and runs it as a service.
+ * Does not create a sprite.
  *
- *   SPRITES_TOKEN=... DATABASE_URL=... pnpm --filter worker deploy:sprite
+ *   DATABASE_URL=... pnpm --filter worker deploy:sprite
  *
- * 1. Bundles worker/ into one file (dist/index.js) with esbuild.
- * 2. Gets or creates the Sprite (SPRITE_NAME, default buyer-worker) and uploads the bundle.
- * 3. Creates/updates service "worker" (node index.js, HTTP status on 8080) so it restarts on boot and wake.
- *    The worker itself holds a renewable Sprite task over /.sprite/api.sock so the Sprite stays awake.
- * Secrets are passed as service env and never printed. The AgentMail WebSocket never runs here.
+ * Auth is the logged-in `sprite` CLI (org stefano94120). SPRITES_TOKEN is not required.
+ * The database URL is written on the Sprite as worker.env and is never printed.
  */
-import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SpritesClient, type Sprite } from "@fly/sprites";
+import { SPRITE_TARGET, assertExistingSprite, assertSpriteUrl } from "../src/sprite-target";
 
-const token = process.env.SPRITES_TOKEN?.trim();
-const dbUrl = process.env.DATABASE_URL?.trim();
-const name = process.env.SPRITE_NAME?.trim() || "buyer-worker";
+const workerDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const interval = process.env.WORKER_INTERVAL_MS?.trim() || "120000";
-const APP_DIR_NAME = "buyer-worker";
-const HTTP_PORT = 8080;
+const HTTP_PORT = "8080";
 
-if (!token) {
-  console.error("SPRITES_TOKEN is not set. Fallback: run the worker locally with `pnpm --filter worker start` (watches stay runs_on=local).");
-  process.exit(1);
+function spriteBin(): string {
+  const fromEnv = process.env.SPRITE_BIN?.trim();
+  if (fromEnv && existsSync(fromEnv)) return fromEnv;
+  const local = join(homedir(), ".local/bin/sprite");
+  if (existsSync(local)) return local;
+  return "sprite";
 }
+
+const bin = spriteBin();
+
+function run(args: string[], input?: string): { code: number; stdout: string; stderr: string } {
+  const r = spawnSync(bin, args, { input, encoding: "utf8" });
+  return { code: r.status ?? 1, stdout: r.stdout ?? "", stderr: `${r.stderr ?? ""}${r.error ? r.error.message : ""}` };
+}
+
+function must(args: string[], input?: string): string {
+  const r = run(args, input);
+  if (r.code !== 0) {
+    const detail = `${r.stderr}\n${r.stdout}`.replace(process.env.DATABASE_URL ?? "\u0000", "<DATABASE_URL>");
+    throw new Error(`sprite ${args.join(" ")} failed (${r.code}): ${detail.slice(0, 2000)}`);
+  }
+  return r.stdout;
+}
+
+const dbUrl = process.env.DATABASE_URL?.trim();
 if (!dbUrl) {
   console.error("DATABASE_URL is not set. The Sprite worker needs Neon to write observations; refusing to deploy a dry-run worker.");
   process.exit(1);
 }
 
-const workerDir = join(dirname(fileURLToPath(import.meta.url)), "..");
-
 console.log("[deploy] bundling worker");
-execFileSync("pnpm", ["run", "build"], { cwd: workerDir, stdio: "inherit" });
-const bundle = readFileSync(join(workerDir, "dist", "index.js"));
+const build = spawnSync("pnpm", ["run", "build"], { cwd: workerDir, stdio: "inherit" });
+if ((build.status ?? 1) !== 0) process.exit(build.status ?? 1);
 
-const client = new SpritesClient(token);
-const sprite = await getOrCreate(client, name);
+const { org, name, url } = SPRITE_TARGET;
+const listed = must(["-o", org, "list"]);
+const names = listed
+  .split("\n")
+  .map((l) => l.trim())
+  .filter((l) => l && !l.startsWith("Command") && !l.includes(" "));
+assertExistingSprite(names, name);
+console.log(`[deploy] using existing sprite ${org}/${name}`);
 
-const sh = async (script: string) => {
-  const r = await sprite.execFile("bash", ["-lc", script]);
-  if (r.exitCode !== 0) throw new Error(`sprite command failed (${r.exitCode}): ${script}\n${r.stderr}`);
-  return String(r.stdout).trim();
-};
+const infoRaw = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "sprite-env", "info"]);
+const info = JSON.parse(infoRaw) as { sprite_url?: string };
+if (!info.sprite_url) throw new Error("sprite-env info did not include sprite_url");
+assertSpriteUrl(info.sprite_url, url);
+console.log(`[deploy] sprite URL ${info.sprite_url}`);
 
-const home = await sh("echo $HOME");
-const nodePath = await sh("command -v node || true");
-if (!nodePath) throw new Error("node is not installed on the Sprite");
-console.log(`[deploy] sprite ${name}: node ${await sh("node -v")} at ${nodePath}`);
+const home = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "bash", "-lc", "printf %s \"$HOME\""]).trim();
+if (!home.startsWith("/")) throw new Error("could not read the sprite home directory");
+const appDir = `${home}/buyer-worker`;
+must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "mkdir", "-p", appDir]);
 
-const appDir = `${home}/${APP_DIR_NAME}`;
-await sh(`mkdir -p ${appDir}`);
-await sprite.filesystem().writeFile(`${appDir}/index.js`, bundle);
-console.log(`[deploy] uploaded ${bundle.length} bytes to ${appDir}/index.js`);
+const bundlePath = join(workerDir, "dist", "index.js");
+const bundle = readFileSync(bundlePath);
+must(["-o", org, "-s", name, "file", "push", bundlePath, `${appDir}/index.js`]);
+must(["-o", org, "-s", name, "file", "push", join(workerDir, "scripts/sprite-start.sh"), `${appDir}/start.sh`]);
+must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "chmod", "+x", `${appDir}/start.sh`]);
 
-const logs = await sprite.createService(
-  "worker",
-  {
-    cmd: nodePath,
-    args: ["index.js"],
-    dir: appDir,
-    env: { DATABASE_URL: dbUrl, WORKER_INTERVAL_MS: interval, PORT: String(HTTP_PORT), NODE_ENV: "production" },
-    httpPort: HTTP_PORT,
-  },
-  "10s",
+const envFile = [
+  `DATABASE_URL=${shellQuote(dbUrl)}`,
+  `WORKER_INTERVAL_MS=${shellQuote(interval)}`,
+  `PORT=${shellQuote(HTTP_PORT)}`,
+  "NODE_ENV=production",
+  "",
+].join("\n");
+must(
+  ["-o", org, "-s", name, "exec", "--", "bash", "-lc", `umask 077; cat > ${appDir}/worker.env`],
+  envFile,
 );
-for (let ev = await logs.next(); ev; ev = await logs.next()) {
-  const line = JSON.stringify(ev);
-  console.log(`[service] ${dbUrl ? line.split(dbUrl).join("<DATABASE_URL>") : line}`);
+console.log(`[deploy] uploaded ${bundle.length} bytes to ${appDir}/index.js (database url not printed)`);
+
+const services = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "sprite-env", "services", "list"]);
+if (services.includes("worker")) {
+  console.log("[deploy] replacing existing worker service");
+  must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "sprite-env", "services", "delete", "worker"]);
 }
+const nodePath = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "bash", "-lc", "command -v node"]).trim();
+if (!nodePath.startsWith("/")) throw new Error("node is not installed on the Sprite");
+console.log(`[deploy] node ${nodePath}`);
 
-const svc = await sprite.getService("worker");
-console.log(`[deploy] service worker: ${svc.state?.status ?? "unknown"}${svc.state?.pid ? ` pid ${svc.state.pid}` : ""}`);
-console.log(`[deploy] status URL: \`sprite url -s ${name}\` (GET / returns cycle counters only)`);
-console.log(`[deploy] verify keep-awake: sprite exec -s ${name} -- curl -s --unix-socket /.sprite/api.sock http://sprite/v1/tasks`);
+must([
+  "-o",
+  org,
+  "-s",
+  name,
+  "exec",
+  "--no-stdin",
+  "--",
+  "sprite-env",
+  "services",
+  "create",
+  "worker",
+  "--cmd",
+  "/bin/sh",
+  "--args",
+  "start.sh",
+  "--dir",
+  appDir,
+  "--http-port",
+  HTTP_PORT,
+  "--no-stream",
+]);
 
-async function getOrCreate(c: SpritesClient, spriteName: string): Promise<Sprite> {
-  try {
-    return await c.getSprite(spriteName);
-  } catch {
-    console.log(`[deploy] creating sprite ${spriteName}`);
-    return c.createSprite(spriteName);
-  }
+const state = must(["-o", org, "-s", name, "exec", "--no-stdin", "--", "sprite-env", "services", "get", "worker"]);
+console.log(`[deploy] service worker created on ${url}`);
+console.log(state.split(dbUrl).join("<DATABASE_URL>").slice(0, 1500));
+
+function shellQuote(value: string): string {
+  return `'${value.replace(/'/g, `'\\''`)}'`;
 }

@@ -1,7 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { runCycle } from "./cycle";
+import { assertExistingSprite, assertSpriteUrl, SPRITE_TARGET } from "./sprite-target";
 import { DryRunStore, sampleRun, watchSeedsFromRun, type EventInput, type ObservationInput } from "./store";
+
+test("the worker targets the existing buyer-worker sprite and will not invent one", () => {
+  assert.equal(SPRITE_TARGET.org, "stefano94120");
+  assert.equal(SPRITE_TARGET.name, "buyer-worker");
+  assert.equal(SPRITE_TARGET.url, "https://buyer-worker-b3y4b.sprites.app");
+  assert.doesNotThrow(() => assertExistingSprite(["web-terminal", "buyer-worker"]));
+  assert.throws(() => assertExistingSprite(["web-terminal"]), /Refusing to create/);
+  assert.throws(() => assertSpriteUrl("https://other.sprites.app"), /Refusing to deploy/);
+  assert.doesNotThrow(() => assertSpriteUrl("https://buyer-worker-b3y4b.sprites.app/"));
+});
 
 test("seeds one watch per featured item from the sample savings run", () => {
   const seeds = watchSeedsFromRun(sampleRun());

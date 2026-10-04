@@ -10,9 +10,11 @@ import { emitFallback, errorMessage, safeEmit, shortHash, traced } from "./trace
 const REVIEW_HOLD_MS = Number(process.env.KERNEL_REVIEW_HOLD_MS ?? 10_000);
 
 export function createKernel(): KernelIntegration {
+  // Scope lock: do not verify in a browser, open a live view, or pay. The Kernel client
+  // below stays in this file and is not called.
   return {
-    verifyOffer: (url, emit) => (env.kernelApiKey() ? realVerifyOffer(url, emit) : fallbackVerifyOffer(url, emit, "KERNEL_API_KEY not set")),
-    checkout: (req, emit) => (env.kernelApiKey() ? realCheckout(req, emit) : fallbackCheckout(req, emit)),
+    verifyOffer: (url, emit) => fallbackVerifyOffer(url, emit, "Kernel client unused: offers are links and are not browser-verified"),
+    checkout: (req, emit) => fallbackCheckout(req, emit),
   };
 }
 
@@ -36,7 +38,7 @@ export function fallbackVerifyOffer(url: string, emit: EmitTrace, reason: string
 }
 
 export function fallbackCheckout(req: CheckoutRequest, emit: EmitTrace): Promise<CheckoutResult> {
-  emitFallback(emit, "kernel", `checkout (${req.mode})`, "KERNEL_API_KEY not set: no browser started, nothing purchased", {
+  emitFallback(emit, "kernel", `checkout (${req.mode})`, "Kernel client unused: no browser started, nothing purchased", {
     url: req.url,
   });
   return Promise.resolve({
@@ -45,7 +47,7 @@ export function fallbackCheckout(req: CheckoutRequest, emit: EmitTrace): Promise
     pageTotalCents: null,
     orderRef: null,
     replayUrl: null,
-    failureReason: "Kernel is not configured (KERNEL_API_KEY missing); checkout was not attempted.",
+    failureReason: "Kernel client is unused. The product stores the offer URL and does not check out.",
     usingFallback: true,
   });
 }

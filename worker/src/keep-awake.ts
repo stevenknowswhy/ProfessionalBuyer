@@ -35,12 +35,13 @@ function spriteApi(method: string, path: string, body?: unknown): Promise<number
   });
 }
 
-export function startKeepAwake(expire = process.env.WORKER_TASK_EXPIRE ?? "5m", refreshMs = Number(process.env.WORKER_TASK_REFRESH_MS ?? 60_000)) {
+export function startKeepAwake(expire = process.env.WORKER_TASK_EXPIRE ?? "1h", refreshMs = Number(process.env.WORKER_TASK_REFRESH_MS ?? 30 * 60_000)) {
   if (!onSprite()) return { stop: async () => {} };
   const renew = async () => {
     try {
-      const status = await spriteApi("PUT", `/v1/tasks/${TASK}`, { expire });
-      if (status !== 200 && status !== 201) console.error(`[worker] sprite task renew returned HTTP ${status}`);
+      let status = await spriteApi("PUT", `/v1/tasks/${TASK}`, { expire });
+      if (status === 404) status = await spriteApi("POST", "/v1/tasks", { name: TASK, expire });
+      if (status !== 200 && status !== 201 && status !== 204) console.error(`[worker] sprite task renew returned HTTP ${status}`);
     } catch (err) {
       console.error(`[worker] sprite task renew failed: ${err instanceof Error ? err.message : err}`);
     }
