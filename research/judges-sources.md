@@ -1,0 +1,24 @@
+# Judge research index notes (all index-sourced Oct 4, 2026; no sign-in scrape of X feeds)
+- Fly.io "Computers for Agents" launch + $25M Series D + Scott Johnston CEO: https://fly.io/news/fly-io-launches-computers-for-agents/
+- Fly pivot background (Mackey manifesto, Sprites): https://www.webpronews.com/from-ceo-to-visionary-how-kurt-mackey-bet-fly-io-on-ai-agents-and-disposable-computers/
+- Mastra Code + Observational Memory + Harness (Aiyer on YouTube): https://www.youtube.com/watch?v=Hbgh3Iyd3Mk
+- OpenBox/Mastra governance (Aiyer quote): https://www.morningstar.com/news/pr-newswire/20260504ph48335/openbox-ai-and-mastra-bring-default-runtime-governance-to-every-typescript-agent-as-enterprises-brace-for-an-agentic-security-reckoning
+- Abhi Aiyer GitHub (active 2026-09-29): https://github.com/abhiaiyer91
+- Exa $250M at $2.5B (a16z-led): https://en.wedoany.com/shortnews/175274.html
+- Exa $85M at $700M: https://techfundingnews.com/san-franciscos-exa-raises-85m-at-700m-valuation-to-build-the-search-engine-for-ai/
+- Kernel YC page: https://www.ycombinator.com/companies/kernel
+- Kernel $22M (Jue quote): https://siliconangle.com/2025/10/09/kernel-raises-22m-power-browser-infrastructure-ai-agents/
+- Executor repo (Rhys Sullivan): https://github.com/UsefulSoftwareCo/executor
+- Sullivan MCP Night talk: https://www.youtube.com/watch?v=kgksikB9O4c
+- assistant-ui YC page (Farshid): https://www.ycombinator.com/companies/assistant-ui
+- Farshid interview "The Merge" (CodeRabbit): https://www.coderabbit.ai/blog/ai-agent-ux-simon-farshid-assistant-ui
+- AgentMail $6M (Aujla quotes, TechCrunch): https://techcrunch.com/2026/03/10/agentmail-raises-6m-to-build-an-email-service-for-ai-agents/
+- AgentMail growth detail: https://startupfortune.com/giving-your-ai-agent-an-email-address-is-now-a-real-product-category/
+- Erik Thorelli OSS podcast: https://allthingsopen.org/articles/open-source-maintainers-cash-ai-code-review
+- CodeRabbit Slack agent: https://www.archyworldys.com/coderabbit-launches-ai-slack-agent-for-engineering-teams/
+- Jakub Krehel site: https://jakub.kr
+- Krehel distillation skill: https://github.com/shogun101/interface-feel
+- Interfere careers (Krehel title): https://github.com/interfere-inc/docs/blob/HEAD/sources/site/interfere.com/changelog.md
+- Databricks agentic data stack 2026: https://moorinsightsstrategy.com/field-notes/databricks-bets-on-owning-the-agentic-data-stack-at-data-ai-summit-2026/
+- James da Costa bio (a16z): http://a16z.com/author/james-da-costa/
+- da Costa Brunswick interview: https://review.brunswickgroup.com/article/fintech-insider-a16z/
