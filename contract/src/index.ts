@@ -240,7 +240,7 @@ export type ApiError = z.infer<typeof ApiError>;
 
 /**
  * REST surface served by the Mastra server (default http://localhost:4111).
- * Chat streaming is separate: POST /chat (Mastra chatRoute, AI SDK UI message stream).
+ * Chat streaming is separate: POST /chat/buyer (Mastra chatRoute with version 'v7', AI SDK v7 UI message stream).
  * `trace` is Server-Sent Events: each `data:` line is one TraceEvent JSON.
  */
 export const ENDPOINTS = {

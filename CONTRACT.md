@@ -22,7 +22,7 @@ Money is integer cents. Timestamps are ISO-8601 UTC. IDs are opaque strings.
 | Web app | `http://localhost:3000` |
 | CORS | Backend allows `http://localhost:3000` (and the deployed web origin if any) |
 | Auth | None. Single demo household. Do not add login |
-| Chat | `POST /chat`, Mastra `chatRoute` (AI SDK UI message stream), consumed by assistant-ui's `useChatRuntime` |
+| Chat | `POST /chat/buyer`, Mastra `chatRoute({ path: '/chat/:agentId', version: 'v7' })` (AI SDK v7 UI message stream), consumed by assistant-ui's `useChatRuntime`. Agent key: `buyer` |
 | Errors | Any non-2xx response is `{ "error": { "code": string, "message": string } }` (`ApiError`) |
 
 ## REST endpoints
@@ -67,7 +67,7 @@ Text never carries the numbers alone. If a figure is mentioned in prose, it is a
 4. Backend runs the checkout (Kernel). The approval moves `executing` then `completed`, with `checkout.liveViewUrl` filled as soon as the browser exists. The UI polls `GET /api/approvals` every second while `executing`, and the trace stream shows the steps.
 5. `mode: "review"` stops at the order-review page (`stoppedAt: "review-page"`). `mode: "place"` places the order (`stoppedAt: "placed"`).
 
-How the backend resumes the Mastra agent (native `requireApproval` and `approveToolCall`, or a plain function call) is a backend detail that never changes this contract.
+The model has no tool that spends money; `proposePurchase` only creates the pending row. Spending happens only in the approve route. If the backend later adds Mastra's native `requireApproval` as a stretch, this contract still holds: the card keeps calling REST.
 
 ## Labeling rules the frontend enforces
 

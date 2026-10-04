@@ -25,11 +25,21 @@ Branch: `cursor/frontend-ui-5766`. Open small PRs into `main` at every gate. Do 
 
 ## Stack
 
-Next.js (App Router) on :3000, Tailwind, shadcn/ui, Motion (`motion/react`), assistant-ui. Create the app with `npx assistant-ui@latest create` inside `web/` (or add assistant-ui to a Next app), then wire `useChatRuntime` with `AssistantChatTransport({ api: `${API_BASE}/chat` })`. In fixture mode, `/chat` is replaced by a local scripted route that streams the canned tool calls from `ToolResults` so the chat is designed and testable offline. Add `@buyer/contract` as a workspace dependency (`"@buyer/contract": "workspace:*"`) and set `transpilePackages: ["@buyer/contract"]` in `next.config`, since the package ships TypeScript source. Import the package root only (never `@buyer/contract/offer-hash`, which is server-side). Register one tool UI per name in `ToolResults`: `showSavings`, `showOffers`, `proposePurchase`, `showLiveView`.
+Next.js (App Router) on :3000, Tailwind, shadcn/ui, Motion (`motion/react`), assistant-ui. Create the app with `npx assistant-ui@latest create` inside `web/` (or add assistant-ui to a Next app), then wire `useChatRuntime` from `@assistant-ui/ai-sdk` (the AI SDK v7 package) with `AssistantChatTransport({ api: `${API_BASE}/chat/buyer` })`. Install `ai`, `@ai-sdk/*` and `@assistant-ui/*` at `@latest` together; do not copy code written for `ai@5` or `ai@6`, and do not use the archived `assistant-ui/tool-ui`. In fixture mode, `/chat/buyer` is replaced by a local scripted route that streams the canned tool calls from `ToolResults` so the chat is designed and testable offline. Add `@buyer/contract` as a workspace dependency (`"@buyer/contract": "workspace:*"`) and set `transpilePackages: ["@buyer/contract"]` in `next.config`, since the package ships TypeScript source. Import the package root only (never `@buyer/contract/offer-hash`, which is server-side). Register one tool UI per name in `ToolResults`: `showSavings`, `showOffers`, `proposePurchase`, `showLiveView`.
+
+## Skills and components
+
+- **Read these skills before coding** (in `.claude/skills/`): `assistant-ui`, `assistant-ui-setup` (see `references/mastra.md`, "Separate server"), `assistant-ui-tools`, `assistant-ui-elements`, `assistant-ui-runtime`, `shadcn`, `frontend-design`, `emil-design-eng`. Use `review-animations` and `web-design-guidelines` as review passes in F4. Docs MCP servers for assistant-ui, shadcn and Mastra are in `.cursor/mcp.json`.
+- **The Number:** `@number-flow/react` (digit roll, `Intl` currency formatting, honors reduced motion). Size the parent element, style via `::part()`, use `tabular-nums`.
+- **Approval card and trace panel:** start from `npx assistant-ui@latest add elements-approval-card elements-trace-waterfall`, then restyle completely to our tokens. The approval card always calls the REST approve and decline endpoints (no native tool approval).
+- **Price card:** hand-built (there is no comparison element).
+- **Sparklines:** hand-written SVG `<polyline>`, no chart library.
+- **Avoid** the generic AI look: Magic UI shimmer and border beams, Aceternity spotlights and auroras, React Bits (Commons Clause license, heavy dependencies), and the default assistant-ui shimmer.
 
 ## Design brief (summary of PLAN.md section 8)
 
-- **Color in OKLCH.** Warm paper background, deep ink text, one restrained green for savings, one signal color for "needs your approval". Two neutrals plus two accents. One mode, done well.
+- **Not the default AI look.** Warm cream plus a serif is a known AI-generated tell. Pick a paper tone that is not `#F4F1EA`-ish cream and an accent that is not terracotta; use sentence-case labels, no `A · B · C` meta strings, and no "→" on every button. Put the token plan (colors, type roles, a wireframe sketch) in the F0 PR description.
+- **Color in OKLCH.** Paper background, deep ink text, one restrained green for savings, one signal color for "needs your approval". Two neutrals plus two accents. One mode, done well.
 - **Type.** Display serif for headlines and the Number, clean sans for UI, mono for formulas. Tabular figures on every money value.
 - **Layout.** Three zones: household ledger left, concierge conversation center, workbench right (trace, live browser, savings). All three visible at 1440 and 1920 widths so the demo never changes page.
 - **Craft rules.** Concentric radii; shadows as borders; optical alignment; 40px minimum hit areas; visible focus rings; motion 150 to 250 ms ease-out with 40 ms stagger and springs for layout; nothing on the demo path blocks over 300 ms; skeletons instead of spinners; designed empty states; `text-wrap: balance` on headings; honor `prefers-reduced-motion`; favicon, OG image, real 404.
@@ -105,5 +115,5 @@ Read, in this order: PLAN-frontend.md (your plan), CONTRACT.md (the interface), 
 
 Work on branch cursor/frontend-ui-5766, branched from main. Do not edit anything outside web/ except additive contract changes per CONTRACT.md. Two other agents build the backend in parallel (core API and integrations); you only talk to the core API.
 
-Build web/ so it runs fully on the sample fixtures with no backend, with one env var (NEXT_PUBLIC_API_BASE) to switch to the real API. Start with F0: shell, design tokens, three-zone layout, the fixture data layer and a /dev gallery, and open a PR immediately. Then follow the timeline. Never compute or type a dollar figure: display what the contract provides. Open small PRs at every gate.
+Build web/ so it runs fully on the sample fixtures with no backend, with one env var (NEXT_PUBLIC_API_BASE) to switch to the real API. Before coding, read the skills listed in PLAN-frontend.md and AGENTS.md. Start with F0: shell, design tokens, three-zone layout, the fixture data layer and a /dev gallery, and open a PR immediately. Then follow the timeline. Never compute or type a dollar figure: display what the contract provides. Open small PRs at every gate.
 ```

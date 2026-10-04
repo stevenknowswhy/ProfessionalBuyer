@@ -146,7 +146,7 @@ The first 45 minutes run these as parallel pass/fail spikes (about 20 minutes ea
 
 | # | Spike | Pass when | Fallback if it fails |
 |---|---|---|---|
-| A | **Approval round-trip.** Mastra `chatRoute` streams into assistant-ui, and a `requireApproval` tool shows an Approve/Decline card | Tap Approve and the tool executes; tap Decline and the model sees the reason | `proposePurchase` writes an `approvals` row. The card posts to `POST /approvals/:id/approve`, which runs the purchase. The agent never calls `purchase` itself |
+| A | **Chat round-trip.** Mastra `chatRoute` (`version: 'v7'`) streams into assistant-ui and a `proposePurchase` tool result renders as the approval card | The card renders from a real tool result and its Approve calls `POST /api/approvals/:id/approve` | The dashboard's own buttons call the same scan and approval endpoints; chat shows text only. (Native `requireApproval` is a stretch, see techStack.md section 2) |
 | B | **Kernel live view.** `browsers.create()`, `playwright.execute` reads a product page, `browser_live_view_url` embeds in our page | Live view renders in an iframe and the page title/price comes back | Open the live view URL in a second window beside the app |
 | C | **Exa price extraction.** `outputSchema` with `maxAgeHours: 0` on 6 real products across 3 channels | At least 5 of 6 return a usable `{retailer, price, pack_quantity, unit, url}` | Exa `highlights` plus an LLM extraction step with the same Zod schema |
 | D | **AgentMail inbound.** WebSocket receives a forwarded receipt with `extractedText`, including a PDF attachment | Forwarded receipt text reaches the agent within seconds | Poll `messages.list` every 5 seconds |
@@ -245,6 +245,10 @@ Not sponsors, but in the stack: Laya (open source, Apache-2.0), Next.js, Tailwin
 
 **Concept: a concierge's private ledger.** The product is a professional buyer for a household, so it should feel like a private bank or a very good concierge: calm, precise, warm. It should not feel like an AI dashboard. No purple gradients, no generic glass cards.
 
+**Watch out: "warm cream plus serif" is itself a known AI-generated look.** Anthropic's `frontend-design` skill lists it as a tell, along with terracotta accents, all-caps tracked eyebrow labels, `A · B · C` meta strings and "→" on every button. Keep the ledger concept, but make it specific: pick a paper tone that is not the default cream (`#F4F1EA`-ish), an accent that is not terracotta, sentence-case labels, and one bold move (the Number) instead of decoration everywhere. Write the token plan first, as that skill asks, and get it approved in the F0 PR.
+
+**Components that fit (verified Oct 4):** `@number-flow/react` for the Number's digit roll (MIT, no dependencies, respects reduced motion; size the parent, style via `::part()`); assistant-ui elements `approval-card` and `trace-waterfall` as starting points, fully restyled; hand-written SVG sparklines instead of a chart library. Avoid Magic UI shimmer/beam effects, Aceternity spotlights, and React Bits (Commons Clause license, heavy dependencies).
+
 ### Look
 
 - **Color in OKLCH.** Warm paper background, deep ink text, one accent for savings (a restrained green), one signal color for "needs your approval". Two neutrals plus two accents total. One mode, done well.
@@ -326,3 +330,11 @@ Defaults below are what the plan assumes. Change them only deliberately.
 ## 11. Out of scope today
 
 Smart-home or IoT inventory, auto-sent negotiation emails, subscription cancellation, Databricks integration (a judge's employer, not a co-host tool), Assistant Cloud (a prize, not a requirement; Mastra memory on Neon covers persistence), mobile apps, multi-household accounts, and any statistic we cannot defend live.
+
+## 12. Skills, docs servers and starters (checked Oct 4)
+
+- **Vendored agent skills** in `.claude/skills/` (see `SOURCES.md` there). Each agent plan names the ones to read before coding.
+- **Docs MCP servers** in `.cursor/mcp.json`: Mastra, assistant-ui and shadcn (no keys needed).
+- **Starters, not clones.** Backend: `npx create-mastra@latest`. Frontend: `npx assistant-ui@latest create`. There is no maintained template that combines Next.js, a separate Mastra server and assistant-ui, so we use the two official scaffolds plus the [separate-server guide](https://www.assistant-ui.com/docs/integrations/frameworks/mastra/separate-server).
+- **Reference repos to read for patterns only** (old AI SDK versions, do not copy code): [mastra-ai/ui-dojo](https://github.com/mastra-ai/ui-dojo), [agentmail-to/agentmail-examples](https://github.com/agentmail-to/agentmail-examples), [kernel/kernel-nextjs-template](https://github.com/kernel/kernel-nextjs-template).
+- Verified constraints that shape the build are in [techStack.md](techStack.md#verified-constraints-checked-oct-4-1215-pm).

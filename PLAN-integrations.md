@@ -19,6 +19,12 @@ Own the four integrations that are slow, flaky, and need their own trial and err
 
 Branch: `cursor/integrations-5766`. Small PRs into `main` at every gate.
 
+## Skills and docs
+
+- **Read before coding** (in `.claude/skills/`): `kernel-typescript-sdk`, `sprites`, `neon-postgres`. For AgentMail, install the official skill into your VM only (its repo has no license, so it is not committed): `npx skills add agentmail-to/agentmail-skills --skill agentmail -g -y`. Do not commit anything it writes.
+- Kernel: [live view](https://kernel.sh/docs/browsers/live-view.md), [vault fill](https://kernel.sh/docs/vaults/fill.md), [payments](https://kernel.sh/docs/browsers/payments.md). A completed fill is not proof of payment: check the order-review total in code. The org is now `kernel`; ignore the deprecated `@onkernel/create-kernel-app`.
+- Sprites: [keeping Sprites running](https://docs.fly.io/sprites/keeping-sprites-running.md). AgentMail: [WebSocket quickstart](https://docs.agentmail.to/websockets/quickstart.md); examples in `agentmail-to/agentmail-examples` pin `agentmail ^0.4` (current 0.5.x), so use them for patterns only.
+
 ## Rules
 
 1. **Implement the interfaces exactly.** `@buyer/integrations` default-exports an object satisfying `Integrations`. Core swaps its stub for yours with one import, so a signature change is a contract change.
@@ -37,7 +43,7 @@ Branch: `cursor/integrations-5766`. Small PRs into `main` at every gate.
 
 ### I1. 12:40 to 1:45: Sprite live (hard deadline 1:45)
 
-- Deploy `worker/` to a Sprite with `@fly/sprites`. Prove it keeps polling with no client attached (Spike F): try the mechanisms in [techStack.md section 4](techStack.md#4-flyio-sprites-the-agents-always-on-computer) and keep the one that works. Fallback: an external scheduled ping to the Sprite URL each cycle.
+- Deploy `worker/` to a Sprite with `@fly/sprites`. Run it as a Sprite **service** (`sprite-env services create worker --cmd node --args "dist/index.js"`) so it restarts, and hold a Sprite **task** (`POST /v1/tasks {"name":"worker","expire":"1h"}` over `/.sprite/api.sock`, renewed with `PUT` from inside the worker every 30 minutes) so it stays awake. Prove it with no client attached (Spike F). Fallback: an external scheduled ping to the Sprite URL each cycle. Never run the AgentMail WebSocket on the Sprite: a paused Sprite drops TCP connections.
 - Set `runs_on = 'sprite'` on the watches. Record the start time.
 - **Done when:** observations keep arriving from the Sprite for 15 minutes with your session detached. Post the count in the PR.
 
@@ -84,5 +90,5 @@ Read in order: PLAN-integrations.md (your plan), contract/src/integrations.ts (t
 
 Work on branch cursor/integrations-5766 from main. Edit only integrations/, worker/, laya-sidecar/, plus additive contract changes per CONTRACT.md.
 
-Start with I0: publish a stub @buyer/integrations package and a worker/ that writes watch observations to Neon, and open a PR immediately. The Sprite worker must be live and writing observations by 1:45 PM; that deadline beats everything else. Then Kernel verify and guest checkout (review mode), then AgentMail and Laya. Every external call emits a trace event and has a labeled fallback. If a key is missing, use the fallback and tell me in the PR description; do not stop.
+Before coding, read the skills listed in PLAN-integrations.md and AGENTS.md. Start with I0: publish a stub @buyer/integrations package and a worker/ that writes watch observations to Neon, and open a PR immediately. The Sprite worker must be live and writing observations by 1:45 PM; that deadline beats everything else. Then Kernel verify and guest checkout (review mode), then AgentMail and Laya. Every external call emits a trace event and has a labeled fallback. If a key is missing, use the fallback and tell me in the PR description; do not stop.
 ```

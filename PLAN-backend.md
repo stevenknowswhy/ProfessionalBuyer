@@ -27,15 +27,18 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 
 - Node 22+, pnpm workspace. Add `agent/` (listed in `pnpm-workspace.yaml`).
 - Env names: [techStack.md](techStack.md#environment-variables). Rewrite `.env.example` on `main` to use Neon's names (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`) instead of `NEON_DATABASE_URL`, and add every name the three agents need. Never commit secrets. If a key is missing, build against the fallback, mark it in `Health`, and list it in your PR description.
-- Ports: Mastra server 4111. Custom REST routes use `registerApiRoute` from `@mastra/core/server`. Chat uses `chatRoute` from `@mastra/ai-sdk` at `/chat`.
+- Ports: Mastra server 4111. Custom REST routes use `registerApiRoute` from `@mastra/core/server`. Chat: `chatRoute({ path: '/chat/:agentId', version: 'v7' })` from `@mastra/ai-sdk`, agent key `buyer`, so the URL is `/chat/buyer`. **`version: 'v7'` is required** (assistant-ui needs AI SDK v7; the default is v5). CORS on the Mastra `server.cors` option for `http://localhost:3000`.
+- Scaffold with `npx create-mastra@latest`, then install `@mastra/core @mastra/ai-sdk @mastra/pg @mastra/mcp ai` at `@latest` together.
+- **Read these skills before coding** (in `.claude/skills/`): `mastra`, `neon-postgres`, `neon-ai-gateway`, `build-with-exa`. The Mastra docs MCP server is configured in `.cursor/mcp.json`.
+- **Neon AI Gateway** needs a paid plan with prepaid credits and a supported region ([constraints](techStack.md#verified-constraints-checked-oct-4-1215-pm)). If `NEON_AI_GATEWAY_TOKEN` is missing or a call fails, use the direct provider key and mark Neon Gateway as fallback in `Health`. Do not spend more than 10 minutes on it.
 
 ## Timeline (PT)
 
 ### B0. 12:00 to 12:40: skeleton the frontend can call
 
 - `agent/` Mastra project; server on :4111; CORS for :3000.
-- All `ENDPOINTS` served from fixtures, including `GET /api/trace` as SSE replaying `trace.sample.json` 400 ms apart. `POST /chat` is a canned agent that calls `showSavings` with the sample run.
-- `.env.example` rewritten, `.coderabbit.yaml` (contents in [techStack.md](techStack.md)), `pnpm dev` starts the server.
+- All `ENDPOINTS` served from fixtures, including `GET /api/trace` as SSE replaying `trace.sample.json` 400 ms apart. `POST /chat/buyer` is a canned agent that calls `showSavings` with the sample run.
+- `.env.example` rewritten (`.coderabbit.yaml` is already in the repo), `pnpm dev` starts the server.
 - **Done when:** `curl localhost:4111/api/savings/latest` passes `SavingsRun.parse`. Merge immediately.
 
 ### B1. 12:40 to 1:30: the number, real
@@ -50,8 +53,9 @@ Branch: `cursor/backend-core-5766`. Open small PRs into `main` at every gate. Do
 ### B2. 1:30 to 2:30: the agent acts
 
 - Mastra agent with tools named exactly as `ToolResults` keys (`showSavings`, `showOffers`, `proposePurchase`, `showLiveView`), each returning its contract schema. Memory on Neon, tracing on.
-- Executor: connect Mastra `MCPClient` to the Executor endpoint for the outside tools listed in [techStack.md section 6](techStack.md#6-executor-one-gateway-for-the-agents-outside-tools). Write each policy decision into the trace event's `policy`. At least one tool is `ask`. (Spike G.)
-- Approval gate: `proposePurchase` writes the `Approval` row. Before proposing, call `integrations.kernel.verifyOffer` and use the verified price. `POST /api/approvals/:id/approve` checks cap, merchant allowlist and offer hash, then calls `integrations.kernel.checkout` with `mode` from `CHECKOUT_MODE` and stores `liveViewUrl` the moment `onLiveView` fires. The purchase tool is marked `requireApproval`; the approve route resumes it with `approveToolCall` using the stored `mastra_run_id`. If that spike fails, the route calls checkout directly. The contract does not change either way. (Spike A.)
+- Executor (v1, [executor.sh](https://executor.sh); follow https://executor.sh/setup-prompt.md): run `npm i -g executor && executor install && executor web` next to the agent server (port 4788), add the AgentMail MCP and Exa MCP as sources, and connect Mastra `MCPClient` to `http://127.0.0.1:4788/mcp` for the outside tools listed in [techStack.md section 6](techStack.md#6-executor-one-gateway-for-the-agents-outside-tools). Write each policy decision into the trace event's `policy`. At least one tool is `ask`. (Spike G.)
+- Approval gate: the model has **no tool that spends money**. `proposePurchase` calls `integrations.kernel.verifyOffer`, uses the verified price, and writes a `pending` `Approval` row, which it returns as the tool result. `POST /api/approvals/:id/approve` checks cap, merchant allowlist and offer hash against a fresh read, then calls `integrations.kernel.checkout` with `mode` from `CHECKOUT_MODE` and stores `liveViewUrl` the moment `onLiveView` fires. Run checkout in the background and return the `executing` approval immediately; the UI polls. (Spike A: the tool result renders as the card in assistant-ui.)
+- Do **not** build Mastra-native `requireApproval` before 3:15. It is a stretch ([why](techStack.md#2-mastra-the-agent-and-its-guardrails)).
 - Merchant allowlist and demo item come from the integrations agent's pick (recorded in `DECISIONS.md`).
 - **Done when:** in chat, "buy the cheapest" yields `proposePurchase`; approve drives `checkout` (stubbed or real) and the approval reaches `completed` with a live view URL.
 
@@ -87,5 +91,5 @@ Read in order: PLAN-backend.md (your plan), CONTRACT.md, contract/src/index.ts, 
 
 Work on branch cursor/backend-core-5766 from main. Edit only agent/, db/, seed/, .env.example, scripts/, .coderabbit.yaml, plus additive contract changes per CONTRACT.md.
 
-Start with B0: serve every endpoint in ENDPOINTS from contract/fixtures on the Mastra server at :4111 and open a PR immediately. Then follow the timeline. Call Kernel, AgentMail and Laya only through the Integrations interface, stubbed until @buyer/integrations lands. Use the shared landed-cost functions for every dollar figure. If a key is missing, use the labeled fallback and tell me in the PR description; do not stop.
+Before coding, read the skills listed in PLAN-backend.md (mastra, neon-postgres, neon-ai-gateway, build-with-exa) and AGENTS.md. Start with B0: serve every endpoint in ENDPOINTS from contract/fixtures on the Mastra server at :4111 and open a PR immediately. Then follow the timeline. Call Kernel, AgentMail and Laya only through the Integrations interface, stubbed until @buyer/integrations lands. Use the shared landed-cost functions for every dollar figure. If a key is missing, use the labeled fallback and tell me in the PR description; do not stop.
 ```

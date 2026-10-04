@@ -88,11 +88,12 @@ organization (Spike E).
 ## 2. Mastra: the agent and its guardrails
 
 **Use case.** The agent is a Mastra `Agent` with typed tools (`createTool` with Zod schemas), an ingest workflow, memory
-and tracing. Its most important feature for us is **human-in-the-loop approval**: the buy tool is marked
-`requireApproval`, so the model can propose a purchase but cannot execute one.
+and tracing, served to the UI by `chatRoute`. Its most important property for us is a **hard separation between
+proposing and spending**: the model has no tool that spends money. It can only call `proposePurchase`, which writes a
+pending approval. Money moves only when a human taps Approve, in a server route the model cannot call.
 
-Tools: `scanOffers`, `computeLanded` (pure code), `verifyOffer` (Kernel, read-only), `proposePurchase`,
-`purchase` (approval-gated), `createWatch`, `sendBriefing`, plus tools surfaced by Executor.
+Tools the model sees (names fixed by the contract): `showSavings`, `showOffers`, `proposePurchase`, `showLiveView`, plus
+internal tools for scanning and verifying, and the outside tools surfaced by Executor.
 
 Memory: message history plus **Observational Memory** and working memory for household preferences (brand strictness,
 "diapers weekly, small savings are worth acting on; a toaster is not").
@@ -106,30 +107,34 @@ check decide."
 import { createTool } from '@mastra/core/tools'
 import { z } from 'zod'
 
-export const purchase = createTool({
-  id: 'purchase',
-  description: 'Check out an approved offer in a Kernel browser',
-  inputSchema: z.object({ approvalId: z.string() }),
-  requireApproval: true,
-  execute: async ({ approvalId }) => { /* server re-checks the approvals row before spending */ },
+export const proposePurchase = createTool({
+  id: 'proposePurchase',
+  description: 'Propose buying the best verified offer. Creates a pending approval; it does not buy.',
+  inputSchema: z.object({ itemId: z.string(), offerId: z.string() }),
+  outputSchema: Approval,                       // from @buyer/contract
+  execute: async ({ itemId, offerId }) => createPendingApproval(itemId, offerId),
 })
 ```
 
-- The stream emits a `tool-call-approval` chunk; the server then calls `agent.approveToolCall({ runId })` or
-  `agent.declineToolCall({ runId, reason })`. Approval needs a storage provider configured (Neon).
-- Chat endpoint for the UI: `chatRoute({ path: '/chat/:agentId' })` from `@mastra/ai-sdk`, served by the Mastra server
-  on port 4111.
+- Chat endpoint: `chatRoute({ path: '/chat/:agentId', version: 'v7' })` from `@mastra/ai-sdk`, served at
+  `http://localhost:4111/chat/buyer`. **`version: 'v7'` is required**: current assistant-ui needs AI SDK v7, and
+  `chatRoute` defaults to v5. `:agentId` is the key in the `agents` object, not the agent's `name`.
+- **Stretch only (after 3:15, if everything else is green):** Mastra's native `requireApproval` on a tool, rendered by
+  assistant-ui's approval card with `respondToApproval` and `sendAutomaticallyWhen:
+  lastAssistantMessageIsCompleteWithApprovalResponses`. It needs storage (Neon) for snapshots. It is not on the critical
+  path because the v7 approval round-trip is not covered by Mastra's own end-to-end tests yet, and the REST path already
+  gives the same guarantee.
 - Tracing is enabled for the Studio view. The in-product trace panel reads our own `events` table, which every tool
   wrapper writes with a sponsor tag.
 
-**Defense in depth.** Mastra's gate is the first layer. `purchase` also re-checks server-side that an approved row
-exists for this exact offer hash, the amount is under `SPEND_CAP_USD`, and the merchant is on the allowlist. Executor
-policy (section 6) is the third layer.
+**Defense in depth.** Layer one: the model has no spending tool. Layer two: `POST /api/approvals/:id/approve` re-checks
+server-side that the offer hash still matches a fresh read, the amount is at most `SPEND_CAP_USD`, and the merchant is
+on the allowlist. Layer three: Executor policy (section 6) on outside tools.
 
-**Fallback.** If the approval chunk does not surface through assistant-ui (Spike A), the approval becomes an
-`approvals` table row and an explicit `POST /approvals/:id/approve` endpoint. The agent never calls `purchase` directly.
+**Fallback.** If the chat stream itself fails (Spike A), the dashboard's own buttons call the same scan and approval
+endpoints. The approval card never depends on the chat stream.
 
-**Proof.** The `purchase` tool definition; the approvals table; trace chips tagged Mastra.
+**Proof.** The tool list (no spending tool); the approvals table; trace chips tagged Mastra.
 
 ---
 
@@ -195,6 +200,11 @@ await sprite.exec('node worker/dist/index.js')   // deployment details settled i
   session, an open TCP connection, or an active task (renewable, max 1 hour). Spike F must prove the worker keeps polling
   for 30 minutes with no client attached.
 - The same `worker/` code runs locally with one command, so a failed deploy changes where it runs, not what it does.
+- **Verified mechanism (docs, Oct 4):** run the worker as a Sprite *service* (`sprite-env services create worker --cmd
+  node --args "dist/index.js"`) so it restarts, and hold a Sprite *task* (`POST /v1/tasks {"name":"worker","expire":"1h"}`
+  over `/.sprite/api.sock`, renewed with `PUT` before it expires) so the Sprite stays awake. A paused Sprite drops open
+  TCP connections, so long-lived sockets (the AgentMail WebSocket) do **not** run on the Sprite; they run in the agent
+  server. Docs: https://docs.fly.io/sprites/keeping-sprites-running.md
 
 **Fallback.** A scheduled ping to the Sprite URL wakes it for each poll cycle. Last resort: run the worker locally and
 say so.
@@ -304,12 +314,19 @@ npx assistant-ui@latest create        # scaffolds the Next.js app
 ```
 
 ```tsx
+import { useChatRuntime, AssistantChatTransport } from '@assistant-ui/ai-sdk'   // v7 package
 const runtime = useChatRuntime({
-  transport: new AssistantChatTransport({ api: 'http://localhost:4111/chat/buyer' }),
+  transport: new AssistantChatTransport({ api: `${process.env.NEXT_PUBLIC_API_BASE}/chat/buyer` }),
 })
 ```
 
 - Tool rendering uses assistant-ui's tool-UI registration; each tool name maps to a React card.
+- Install every `ai`, `@ai-sdk/*`, `@assistant-ui/*` and `@mastra/*` package at `@latest` together. Do not copy code
+  from examples written for `ai@5` or `ai@6` (including `mastra-ai/ui-dojo`), and do not use `assistant-ui/tool-ui`
+  (archived Aug 2026; its widgets moved into assistant-ui elements).
+- Starting points from the assistant-ui elements registry, restyled to our tokens:
+  `npx assistant-ui@latest add elements-approval-card` and `elements-trace-waterfall`. There is no comparison element,
+  so the price card is hand-built.
 - Assistant Cloud (a prize item) is optional and not part of the plan; Mastra memory on Neon covers persistence.
 
 **Fallback.** If a custom card fails, render the default tool UI with the same data and keep the approval path working.
@@ -361,23 +378,7 @@ risk is.
 must post `@coderabbitai full review` on each PR (a comment from a bot account is ignored), or tick **Trigger review** in
 CodeRabbit's status comment. If the repo reaches 10 stars, reviews become automatic.
 
-**Planned `.coderabbit.yaml` (added at G3).**
-
-```yaml
-reviews:
-  profile: chill
-  path_instructions:
-    - path: "contract/src/landed-cost.ts"
-      instructions: |
-        Money math. Check units, rounding and that every constant cites a source. Require unit tests.
-    - path: "agent/src/tools/purchase*"
-      instructions: |
-        This tool spends money. Verify the approval check is server-side, the spend cap and merchant
-        allowlist are enforced, and nothing logs payment data.
-    - path: "seed/**"
-      instructions: |
-        Fixtures must not contain answers (no "compare" or cadence hints in receipt text).
-```
+**`.coderabbit.yaml` is in the repo** (validated against CodeRabbit's schema). It adds path instructions for the money math, the contract, the approval route, Kernel checkout, the schema, seed fixtures and the UI, and skips fixtures, vendored skills and the lockfile. CodeRabbit also reads `AGENTS.md` as review guidance.
 
 **Demo moment.** Q&A: public repo, every PR reviewed, README shows real review catches.
 
@@ -428,3 +429,22 @@ Align with what the sponsors' CLIs write, so setup is copy and paste. PR #1's `.
 
 `.env` is never committed. Add `.gitignore` (`.env`, `.env.*`, `!.env.example`, `node_modules/`, `__pycache__/`,
 `.next/`) as the first commit of the build.
+
+## Verified constraints (checked Oct 4, ~12:15 PM)
+
+These change how we build. Each was checked against vendor docs or source today.
+
+| Area | Constraint | What we do |
+|---|---|---|
+| Neon AI Gateway | Needs a paid Neon plan with prepaid credits, and a project in `aws-us-east-1`, `aws-us-east-2`, `aws-eu-central-1` or `aws-ap-southeast-1`. Credential: `neon credentials create --scope ai_gateway:invoke` | Check plan and region first (human, now). Direct provider key is the labeled fallback |
+| Mastra + assistant-ui | assistant-ui needs AI SDK v7; `chatRoute` defaults to v5 | `chatRoute({ path: '/chat/:agentId', version: 'v7' })`, all AI packages at `@latest` together |
+| Approval | Native v7 approval round-trip is not covered by Mastra's end-to-end tests | REST approval is the contract; native approval is a stretch |
+| Sprites | Paused Sprites drop TCP; a task keeps one awake for at most 1 hour per renewal | Service plus renewed task; no WebSocket on the Sprite |
+| Executor | Two products share the name: v1 (`executor.sh`, local `executor web` on :4788, policy UI with allow / require approval / block) and v2 (`v2.executor.sh`). A cloud agent cannot reach `127.0.0.1` on a laptop | Use **v1**. Run it where the agent server runs (in the dev VM while building, on the demo laptop for the demo). Setup prompt: https://executor.sh/setup-prompt.md |
+| Kernel | Org renamed to `kernel`; `@onkernel/create-kernel-app` is deprecated (use `kernel create`). Payments docs: a completed fill is not proof of payment | Verify the order-review page total in code; read https://kernel.sh/docs/browsers/payments.md and https://kernel.sh/docs/vaults/fill.md |
+| AgentMail | Examples pin `agentmail ^0.4`; current is 0.5.x | Install latest; treat examples as patterns only |
+
+## Agent skills and docs servers in this repo
+
+Vendored skills live in `.claude/skills/` (sources, commits and licenses in `.claude/skills/SOURCES.md`). Docs-only MCP
+servers (no keys) are in `.cursor/mcp.json`. Each agent plan lists which skills to read.

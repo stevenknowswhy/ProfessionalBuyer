@@ -91,3 +91,18 @@ backend-core and integrations, joined by `contract/src/integrations.ts` and a fr
 Kept one frontend agent (design coherence matters more than speed for Best UI). Added a release agent
 at 2:45 for testing, rehearsals and docs. Rejected more agents: one human reviewing and merging PRs is
 the real bottleneck, and lockfile and ownership conflicts grow with each agent.
+
+## 2026-10-04 ~12:20 — Research pass: approval via REST only, AI SDK v7, vendored skills
+
+Checked templates, skills and vendor docs before starting the agents. Changes:
+- **The model has no spending tool.** The earlier plan had the approve route resume a suspended Mastra
+  `requireApproval` stream that no client would be listening to. Now `proposePurchase` writes a pending row and the
+  REST approve route does the spending. Native `requireApproval` is a stretch after 3:15.
+- **Chat is `POST /chat/buyer` with `chatRoute({ version: 'v7' })`.** assistant-ui requires AI SDK v7 and `chatRoute`
+  defaults to v5; the plans disagreed on the path (`/chat` vs `/chat/buyer`).
+- **Sprites:** service plus a renewed task keeps the worker awake; no WebSockets on the Sprite (TCP drops on pause).
+- **Executor v1** (executor.sh), run beside the agent server. **Neon AI Gateway** needs a paid plan and a supported
+  region: check now, direct key is the fallback.
+- **Design:** cream plus serif is a known AI-generated look; the brief now asks for a specific palette and token plan.
+- Vendored 16 official skills into `.claude/skills/` (pinned commits, licenses kept); AgentMail's unlicensed skill is
+  installed at runtime instead. Added `AGENTS.md`, docs MCP servers in `.cursor/mcp.json`, and `.coderabbit.yaml`.

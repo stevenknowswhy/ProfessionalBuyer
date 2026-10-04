@@ -79,6 +79,7 @@ Contributor guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 - [PLAN.md](PLAN.md) — build plan: architecture, schedule and gates, risks and spikes, UI direction
 - [techStack.md](techStack.md) — every sponsor's use case, wiring, fallback and proof
 - [PLAN-frontend.md](PLAN-frontend.md), [PLAN-backend.md](PLAN-backend.md), [PLAN-integrations.md](PLAN-integrations.md), [PLAN-release.md](PLAN-release.md) — the parallel agent plans
+- [AGENTS.md](AGENTS.md) — rules every coding agent follows (ownership, money, spending, secrets, versions)
 - [CONTRACT.md](CONTRACT.md) — the interface between them (`contract/` holds schemas, landed-cost math, sample fixtures)
 - [DECISIONS.md](DECISIONS.md) — decision log
 - [research/](research/) — source research report + judge source links
