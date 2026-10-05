@@ -1,0 +1,16 @@
+{
+  "updatedAt": "2026-10-04T21:57:48.128Z",
+  "model": "openrouter/free",
+  "focus": "big-box",
+  "cycle": 1,
+  "stores": [
+    {
+      "id": "fredmeyer",
+      "name": "Fred Meyer",
+      "domain": "fredmeyer.com",
+      "url": "https://www.fredmeyer.com",
+      "group": "big-box",
+      "foundAt": "2026-10-04T21:57:07.589Z"
+    }
+  ]
+}
