@@ -118,9 +118,9 @@ export function StoreBuilder({
           </p>
         )}
 
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col border-t border-rule">
           {visible.map((store) => (
-            <li key={store.id} data-store-row={store.id} className="enter surface flex min-h-14 flex-col justify-center px-3 py-2.5">
+            <li key={store.id} data-store-row={store.id} className="enter flex min-h-14 flex-col justify-center border-b border-rule py-2.5">
               <span className="flex items-baseline justify-between gap-3">
                 <span className="truncate text-body font-semibold text-ink">{store.name}</span>
                 <span className="shrink-0 text-micro font-semibold text-ink-soft">
@@ -131,7 +131,7 @@ export function StoreBuilder({
             </li>
           ))}
           {checking && (
-            <li data-store-skeleton className="surface flex min-h-14 items-center px-3" aria-hidden>
+            <li data-store-skeleton className="flex min-h-14 items-center border-b border-rule" aria-hidden>
               <Skeleton className={cn("h-4 w-40 rounded-chip bg-paper-sunk")} />
             </li>
           )}
@@ -143,7 +143,7 @@ export function StoreBuilder({
           <button
             type="button"
             onClick={onBack}
-            className="pressable min-h-12 min-w-24 rounded-chip border border-rule bg-paper px-4 text-small font-semibold text-ink"
+            className="pressable min-h-12 min-w-24 rounded-chip border border-rule bg-paper px-4 text-body font-semibold text-ink"
           >
             Back
           </button>
@@ -151,7 +151,7 @@ export function StoreBuilder({
             <button
               type="button"
               onClick={() => setAttempt((value) => value + 1)}
-              className="pressable min-h-12 flex-1 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised"
+              className="pressable min-h-12 flex-1 rounded-chip bg-ink px-4 text-body font-semibold text-paper-raised"
             >
               Try again
             </button>

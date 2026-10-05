@@ -103,7 +103,7 @@ export function Onboarding({
       {!building && (
       <main className="flex w-full min-w-0 flex-1 flex-col gap-5 px-4 pt-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
         <div className="flex flex-col gap-2">
-          <h1 className={cn("text-ink text-balance", step === 2 ? "text-[1.45rem] leading-snug font-display" : "type-heading text-[1.75rem]")}>
+          <h1 className={cn("type-heading text-ink text-balance", step === 2 ? "text-[1.45rem] leading-[1.25]" : "text-[1.75rem]")}>
             {page.title}
           </h1>
           <p className="max-w-[38ch] text-body text-ink-soft">{page.body}</p>
@@ -133,7 +133,7 @@ export function Onboarding({
                 setStep((current) => current - 1);
                 window.scrollTo(0, 0);
               }}
-              className="pressable min-h-12 min-w-24 rounded-chip border border-rule bg-paper px-4 text-small font-semibold text-ink"
+              className="pressable min-h-12 min-w-24 rounded-chip border border-rule bg-paper px-4 text-body font-semibold text-ink"
             >
               Back
             </button>
@@ -141,7 +141,7 @@ export function Onboarding({
           <button
             type="button"
             onClick={continueFrom}
-            className="pressable min-h-12 flex-1 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised"
+            className="pressable min-h-12 flex-1 rounded-chip bg-ink px-4 text-body font-semibold text-paper-raised"
           >
             {step === STEPS.length - 1 ? "Start buying" : "Continue"}
           </button>

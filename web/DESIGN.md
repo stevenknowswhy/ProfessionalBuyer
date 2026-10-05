@@ -9,13 +9,13 @@ The product is a professional buyer for one household. The interface is a **conc
 | Warm cream paper (`#F4F1EA`) | Cool green-grey **ledger paper** (`#EBF5F4`) | Accounting pads are pale green with blue rules; it is the subject's own material |
 | Terracotta / clay accent | **Banknote green** for savings, **highlighter yellow** for "needs your approval" | Green means money kept; a highlighter stroke is how a bookkeeper flags a line |
 | Near-black `#111` text | **Iron-gall ink**, a deep blue-black (`#15223B`) | Fountain-pen ink on a ledger, readable at 14:1 |
-| Serif from the usual list (Fraunces, Instrument Serif, Playfair) | **Bodoni Moda**, optical sizes 6 to 96 | Didone contrast is the banknote and engraved-statement letterform; the Number is set at opsz 96 |
+| Serif from the usual list (Fraunces, Instrument Serif, Playfair, Bodoni, Didot) | **Schibsted Grotesk** for the wordmark, headings, and money | Hairline Didone strokes disappear on a phone. One grotesk keeps the comma and the cents visible |
 | Inter / Geist UI sans | **Schibsted Grotesk** | A newsroom grotesk with true tabular figures; plain, slightly warm |
 | Mono for small data labels | **Spline Sans Mono only for formulas and the offer hash** | Mono marks "this is a computation", nothing else |
 | ALL-CAPS tracked eyebrows, `A · B · C` meta, `→` on buttons | Sentence case, plain sentences, verbs on buttons | Copy rules from the brief |
 | Identical cards with one radius and grey shadow | Concentric radii by depth, hairline ring shadows | Hierarchy comes from depth, not decoration |
 
-One bold move: **the Number**, a very large Bodoni figure. Everything else stays quiet.
+One bold move: **the year total**, a large Schibsted Grotesk figure at weight 650 on the ledger paper. On the phone, that figure is the page. The month sits on the next ledger line, under a rule, not in a matching card. Everything else stays quiet.
 
 ## Color (OKLCH, one light mode)
 
@@ -28,7 +28,7 @@ Two neutrals (paper, ink) and two accents (green, highlighter). Carmine exists o
 | `--paper-sunk` | `0.935 0.014 195` | `#DFEDEC` | Wells, table headers, skeletons |
 | `--rule` | `0.86 0.025 215` | `#BFD6DB` | Ledger-blue hairlines and dividers |
 | `--ink` | `0.255 0.05 262` | `#15223B` | Text, primary buttons |
-| `--ink-soft` | `0.46 0.035 258` | `#4C596C` | Secondary text (AA on paper) |
+| `--ink-soft` | `0.40 0.042 262` | `#3B485F` | Secondary text, about 8:1 on paper |
 | `--ink-faint` | `0.60 0.025 245` | `#74828F` | Tertiary text, never for essential content |
 | `--margin` | `0.50 0.115 160` | `#00774C` | Savings, best offer, success |
 | `--margin-wash` | `0.94 0.035 165` | `#D7F3E5` | Background behind savings highlights |
@@ -42,12 +42,12 @@ shadcn semantic variables map onto these (`--background` is paper, `--foreground
 
 | Role | Face | Size / line | Notes |
 |---|---|---|---|
-| `number` | Bodoni Moda 500, opsz 96 | `clamp(5rem, 11vw, 10rem)` / 0.9 | The Number only. Tabular figures |
-| `display` | Bodoni Moda 500, opsz 48 | 2.5rem / 1.05 | Page and takeover headlines, `text-wrap: balance` |
-| `heading` | Bodoni Moda 500, opsz 24 | 1.5rem / 1.15 | Zone titles, card titles |
+| `number` | Schibsted Grotesk 650 | line-height 1.05 | Money figures. Tabular lining digits, letter-spacing -0.02em. Comma and period stay proportional so the mark is not lost in a digit-wide gap. The surface sets the size |
+| `display` | Schibsted Grotesk 650 | 2.5rem / 1.15 | Page and takeover headlines, `text-wrap: balance` |
+| `heading` | Schibsted Grotesk 650 | 1.5rem / 1.2 | Zone titles. The wordmark uses the same face and weight |
 | `title` | Schibsted Grotesk 600 | 0.9375rem / 1.35 | Row titles, button labels |
-| `body` | Schibsted Grotesk 400 | 0.9375rem / 1.5 | Conversation and prose |
-| `small` | Schibsted Grotesk 450 | 0.8125rem / 1.4 | Secondary lines |
+| `body` | Schibsted Grotesk 400 | 1rem / 1.45 | Conversation and prose |
+| `small` | Schibsted Grotesk 450 | 0.875rem / 1.45 | Secondary lines |
 | `micro` | Schibsted Grotesk 550 | 0.75rem / 1.3 | Badges, sentence case |
 | `formula` | Spline Sans Mono 400 | 0.78rem / 1.5 | Formulas, offer hash |
 

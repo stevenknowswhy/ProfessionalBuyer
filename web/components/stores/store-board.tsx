@@ -51,7 +51,7 @@ function StoreButton({
     >
       <span className="min-w-0">
         <span className={cn("block truncate font-semibold", prominent ? "text-body" : "text-small")}>{name}</span>
-        <span className={cn("block truncate text-micro", pressed ? "text-paper-raised/80" : "text-ink-faint")}>{detail}</span>
+        <span className={cn("block truncate text-small", pressed ? "text-paper-raised/80" : "text-ink-soft")}>{detail}</span>
       </span>
       <span className={cn("shrink-0 text-micro font-semibold", pressed ? "text-paper-raised" : "text-ink-soft")}>
         {pressed ? "Added" : "Add"}
@@ -135,7 +135,10 @@ export function StoreBoard({
         )}
       </div>
 
-      <section aria-labelledby="stores-searching" className="surface flex min-w-0 flex-col gap-3 p-4">
+      <section
+        aria-labelledby="stores-searching"
+        className={cn("flex min-w-0 flex-col gap-3", onClose ? "surface p-4" : "border-b border-rule pb-5")}
+      >
         <div className="flex items-baseline justify-between gap-3">
           <h3 id="stores-searching" className="text-small font-semibold text-ink">
             The buyer searches {plural(chosen.length, "store")}
@@ -163,7 +166,7 @@ export function StoreBoard({
         )}
       </section>
 
-      <form onSubmit={submitLink} className="surface flex min-w-0 flex-col gap-3 p-4">
+      <form onSubmit={submitLink} className={cn("flex min-w-0 flex-col gap-3", onClose ? "surface p-4" : "border-b border-rule pb-5")}>
         <label htmlFor="store-link" className="text-small font-semibold text-ink">
           Paste a store link
         </label>
@@ -177,7 +180,7 @@ export function StoreBoard({
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="field min-w-0 w-full flex-1 rounded-chip border border-rule bg-paper px-3 text-ink outline-none placeholder:text-ink-faint"
+            className="field min-w-0 w-full flex-1 rounded-chip border border-rule bg-paper px-3 text-ink outline-none placeholder:text-ink-soft"
           />
           <button type="submit" className="pressable min-h-12 shrink-0 rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised sm:min-h-11">
             Add store
@@ -215,7 +218,7 @@ export function StoreBoard({
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-body font-semibold text-ink">{store.name}</span>
-                    <span className="block truncate text-micro text-ink-faint">{store.domain}</span>
+                    <span className="block truncate text-small text-ink-soft">{store.domain}</span>
                   </span>
                   <span className="shrink-0 text-micro font-semibold text-ink-soft">Add</span>
                 </button>
@@ -229,7 +232,7 @@ export function StoreBoard({
       <div className="flex min-w-0 flex-col gap-3">
         <label className="relative block min-w-0">
           <span className="sr-only">Filter stores</span>
-          <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
+          <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-soft" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -237,7 +240,7 @@ export function StoreBoard({
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="field w-full min-w-0 rounded-chip border border-rule bg-paper-raised pr-3 pl-10 text-ink outline-none placeholder:text-ink-faint"
+            className="field w-full min-w-0 rounded-chip border border-rule bg-paper-raised pr-3 pl-10 text-ink outline-none placeholder:text-ink-soft"
           />
         </label>
         <div role="group" aria-label="Store groups" className="flex min-w-0 flex-wrap gap-2">
@@ -324,7 +327,7 @@ export function StoreBoard({
         </div>
       )}
 
-      <p className="text-small text-ink-faint">
+      <p className="text-small text-ink-soft">
         {plural(CATALOG.length, "listed store")}, including eBay, Temu, and Etsy.
       </p>
     </div>

@@ -152,7 +152,7 @@ export function CompareMatrix({
               : `Estimate. ${frequency.label.toLowerCase()}, so about ${frequency.perYear} buys a year.`}
           </p>
         </div>
-        <dl className="surface min-w-0 overflow-hidden">
+        <dl className="min-w-0 border-t border-rule">
           <LedgerRow label="You paid" value={formatUsd(line.lineTotalCents)} />
           <LedgerRow
             label="Save this buy"
@@ -207,10 +207,10 @@ export function CompareMatrix({
               {priceSource === "sample" ? "Sample prices." : priceSource === "mixed" ? "Some prices are sample data." : "Live prices."}
             </p>
           </div>
-          <ul className="flex min-w-0 flex-col gap-3">
+          <ul className="flex min-w-0 flex-col border-t border-rule">
             {rows.map((row) => (
-              <li key={row.id} className="surface min-w-0 overflow-hidden">
-                <div className="flex min-w-0 items-start justify-between gap-3 px-3 py-3">
+              <li key={row.id} className="min-w-0 border-b border-rule">
+                <div className="flex min-w-0 items-start justify-between gap-3 py-3">
                   <h4 className="min-w-0 break-words text-body font-semibold text-ink">{row.name}</h4>
                   <MatchMark match={row.match} />
                 </div>
@@ -240,7 +240,7 @@ function LedgerRow({ label, value, tone }: { label: string; value: string; tone?
 }
 
 function MatchMark({ match }: { match: number | null }) {
-  if (match == null) return <span className="shrink-0 text-right text-small text-ink-faint">Not scored</span>;
+  if (match == null) return <span className="shrink-0 text-right text-small text-ink-soft">Not scored</span>;
   const same = match >= MATCH_FLOOR;
   return (
     <span className={cn("shrink-0 text-right text-small font-semibold tabular-nums", same ? "text-margin" : "text-ink-soft")}>
@@ -261,10 +261,10 @@ function LaneRow({
 }) {
   const isBest = offer != null && best != null && offer.storeId === best.storeId && offer.lane === best.lane;
   return (
-    <div className={cn("flex items-start justify-between gap-3 border-t border-rule/70 px-3 py-3", isBest && "bg-margin-wash")}>
+    <div className={cn("flex items-start justify-between gap-3 border-t border-rule/70 py-3", isBest && "bg-margin-wash px-3")}>
       <div className="min-w-0">
         <p className="text-small font-semibold text-ink">{lane.label}</p>
-        <p className="text-micro text-ink-faint">{lane.hint}</p>
+        <p className="text-small text-ink-soft">{lane.hint}</p>
       </div>
       <div className="min-w-0 max-w-[58%] text-right">
         <Cell offer={offer} best={best} />
@@ -275,9 +275,9 @@ function LaneRow({
 
 function MatrixSkeleton() {
   return (
-    <ul aria-hidden className="flex flex-col gap-3">
+    <ul aria-hidden className="flex flex-col border-t border-rule">
       {[0, 1].map((item) => (
-        <li key={item} className="surface p-3">
+        <li key={item} className="border-b border-rule py-3">
           <Skeleton className="h-5 w-28" />
           <Skeleton className="mt-3 h-12 w-full" />
           <Skeleton className="mt-2 h-12 w-full" />
@@ -289,7 +289,7 @@ function MatrixSkeleton() {
 }
 
 function Cell({ offer, best }: { offer?: ComparedOffer; best: ComparedOffer | null }) {
-  if (!offer) return <span className="text-small text-ink-faint">—</span>;
+  if (!offer) return <span className="text-small text-ink-soft">—</span>;
   const isBest = best != null && offer.storeId === best.storeId && offer.lane === best.lane;
   const price =
     offer.deliveredCents != null ? (
@@ -300,13 +300,13 @@ function Cell({ offer, best }: { offer?: ComparedOffer; best: ComparedOffer | nu
   const notes = (
     <>
       {offer.shippingCents + offer.dutyCents > 0 && (
-        <span className="block break-words text-micro text-ink-faint">
+        <span className="block break-words text-small text-ink-soft">
           {offer.shippingCents > 0 ? `${formatUsd(offer.shippingCents)} shipping` : ""}
           {offer.shippingCents > 0 && offer.dutyCents > 0 ? ", " : ""}
           {offer.dutyCents > 0 ? `${formatUsd(offer.dutyCents)} duty est.` : ""}
         </span>
       )}
-      {offer.lane === "overseas" && offer.dutyCents === 0 && <span className="block text-micro text-ink-faint">Duty not included</span>}
+      {offer.lane === "overseas" && offer.dutyCents === 0 && <span className="block text-small text-ink-soft">Duty not included</span>}
     </>
   );
   if (!offer.url) {

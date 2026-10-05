@@ -1,23 +1,13 @@
 "use client";
 
 import { formatUsd } from "@buyer/contract";
+import { MoneyFigure } from "@/components/money-figure";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FAMILY_ITEMS, FAMILY_STORES, type FamilyItem } from "@/lib/family-items";
 import { LANES, MATCH_FLOOR, type ComparedOffer } from "@/lib/receipt";
 import { cn } from "@/lib/utils";
-
-/**
- * Bodoni is loaded under the family name "display".
- * A text optical size keeps the decimal point next to the digits.
- */
-const priceStyle = {
-  fontFamily: "display, Georgia, serif",
-  fontWeight: 500,
-  fontOpticalSizing: "none",
-  fontVariationSettings: '"opsz" 18',
-} as const;
 
 type CompareResponse = {
   offers?: ComparedOffer[];
@@ -105,7 +95,7 @@ export function FamilyBasket() {
         <h2 id="family-basket-title" className="text-[1.35rem] font-semibold leading-tight text-ink">
           A family of four, this week
         </h2>
-        <p className="max-w-[36ch] text-small text-ink-soft">
+        <p className="max-w-[36ch] text-body text-ink-soft">
           Open a row to compare local, online, and overseas listings. This does not place an order. Amazon prices observed
           on 4 Oct 2026 are not a guarantee.
         </p>
@@ -158,9 +148,7 @@ function FamilyRow({
             <span className="block break-words text-body font-semibold text-ink">{item.title}</span>
             <span className="mt-1 block">
               {item.deliveredCents != null ? (
-                <span className="money text-[1.35rem] leading-none text-ink" style={priceStyle}>
-                  {formatUsd(item.deliveredCents)}
-                </span>
+                <MoneyFigure cents={item.deliveredCents} className="text-[1.35rem] text-ink" />
               ) : (
                 <span className="text-small text-ink-soft">The price was not listed</span>
               )}
@@ -224,10 +212,10 @@ function OfferPanel({ item, result, onRetry }: { item: FamilyItem; result?: Bask
         {result.jev === "live" ? "Match is Jev." : "Jev did not score."} {provenanceSentence(result.provenance)}
       </p>
       {groups.map(({ lane, offers }) => (
-        <div key={lane.id} className="surface min-w-0 overflow-hidden">
-          <div className="px-3 py-3">
+        <div key={lane.id} className="min-w-0 border-t border-rule">
+          <div className="py-3">
             <h3 className="text-small font-semibold text-ink">{lane.label}</h3>
-            <p className="text-micro text-ink-faint">{lane.hint}</p>
+            <p className="text-small text-ink-soft">{lane.hint}</p>
           </div>
           {offers.length === 0 ? (
             <p className="border-t border-rule/70 px-3 py-3 text-small text-ink-soft">No listing in this group.</p>
@@ -249,7 +237,7 @@ function OfferRow({ item, offer }: { item: FamilyItem; offer: ComparedOffer }) {
   const save =
     same && item.deliveredCents != null && offer.deliveredCents != null ? item.deliveredCents - offer.deliveredCents : 0;
   return (
-    <li className="min-w-0 border-t border-rule/70 px-3 py-3">
+    <li className="min-w-0 border-t border-rule/70 py-3">
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="break-words text-body font-semibold text-ink">{offer.storeName}</p>
@@ -265,18 +253,16 @@ function OfferRow({ item, offer }: { item: FamilyItem; offer: ComparedOffer }) {
       <div className="mt-2 flex min-w-0 items-end justify-between gap-3">
         <div className="min-w-0">
           {offer.deliveredCents != null ? (
-            <p className="money text-[1.25rem] leading-none text-ink" style={priceStyle}>
-              {formatUsd(offer.deliveredCents)}
-            </p>
+            <MoneyFigure cents={offer.deliveredCents} className="text-[1.25rem] text-ink" />
           ) : (
             <p className="text-small text-ink-soft">Price not listed</p>
           )}
           {save > 0 && <p className="money mt-1 text-small font-semibold text-margin">Save {formatUsd(save)}</p>}
           <p className="mt-1 text-micro font-semibold text-ink-soft">{offer.provenance === "live" ? "Live" : "Sample"}</p>
-          {offer.shippingCents > 0 && <p className="text-micro text-ink-faint">{formatUsd(offer.shippingCents)} shipping</p>}
-          {offer.dutyCents > 0 && <p className="text-micro text-ink-faint">{formatUsd(offer.dutyCents)} duty est.</p>}
+          {offer.shippingCents > 0 && <p className="text-small text-ink-soft">{formatUsd(offer.shippingCents)} shipping</p>}
+          {offer.dutyCents > 0 && <p className="text-small text-ink-soft">{formatUsd(offer.dutyCents)} duty est.</p>}
           {offer.lane === "overseas" && offer.dutyCents === 0 && (
-            <p className="text-micro text-ink-faint">Duty not included</p>
+            <p className="text-small text-ink-soft">Duty not included</p>
           )}
         </div>
         {offer.url ? (

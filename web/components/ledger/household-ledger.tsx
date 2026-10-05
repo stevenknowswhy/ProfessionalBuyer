@@ -66,7 +66,7 @@ export function HouseholdLedger({
                 {plural(purchases.length, "buy")}
                 {last ? `, last on ${formatDate(last.date)} at ${last.retailer}` : ""}
               </p>
-              <p className="text-right text-small text-ink-faint">last paid</p>
+              <p className="text-right text-small text-ink-soft">last paid</p>
               {item.brand && item.brandStrictness === "exact" && (
                 <p className="col-span-2 text-small text-ink-soft">{item.brand} only</p>
               )}
@@ -95,7 +95,7 @@ export function HouseholdLedger({
           <h3 id="ledger-receipts" className="text-small font-semibold text-ink">
             Recent receipts
           </h3>
-          <span className="text-small text-ink-faint">{plural(household.receipts.length, "receipt")}</span>
+          <span className="text-small text-ink-soft">{plural(household.receipts.length, "receipt")}</span>
         </div>
         <ul className="flex flex-col gap-1">
           {[...household.receipts]
@@ -105,7 +105,7 @@ export function HouseholdLedger({
               <li key={r.id} className="flex items-center justify-between gap-3 rounded-chip py-1.5 text-small">
                 <span className="truncate text-ink">
                   {r.retailer}
-                  <span className="text-ink-faint">, {formatDate(r.receivedAt)}</span>
+                  <span className="text-ink-soft">, {formatDate(r.receivedAt)}</span>
                 </span>
                 <span className="flex items-center gap-2">
                   {r.triage.via === "laya" && <Tag label="Laya" className="h-5 px-2" title={`Triaged by Laya, confidence ${r.triage.confidence}`} />}

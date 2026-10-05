@@ -44,31 +44,31 @@ export function MoreMenu({
         className="more-drawer phone-header absolute inset-y-0 right-0 flex w-[min(20rem,86vw)] flex-col border-l border-rule bg-paper-raised pb-[env(safe-area-inset-bottom)]"
       >
         <div className="flex h-14 items-center justify-between gap-3 border-b border-rule px-4">
-          <p className="text-body font-semibold text-ink">More</p>
+          <p className="type-heading text-[1.35rem] text-ink">More</p>
           <button
             type="button"
             onClick={onClose}
-            className="pressable min-h-11 rounded-chip px-3 text-small font-semibold text-ink"
+            className="pressable min-h-11 rounded-chip px-3 text-body font-semibold text-ink"
           >
             Close
           </button>
         </div>
-        <ul className="flex flex-col px-2 py-2">
+        <ul className="flex flex-col border-t border-rule">
           {ITEMS.map((item) => {
             const selected = current === item.id;
             return (
-              <li key={item.id}>
+              <li key={item.id} className="border-b border-rule">
                 <button
                   type="button"
                   aria-current={selected ? "page" : undefined}
                   onClick={() => onSelect(item.id)}
                   className={cn(
-                    "pressable flex min-h-16 w-full flex-col items-start justify-center gap-0.5 rounded-card px-3 text-left",
-                    selected ? "bg-margin-wash" : "",
+                    "pressable relative flex min-h-[4.75rem] w-full flex-col items-start justify-center gap-1 px-4 py-3 text-left",
+                    selected ? "bg-margin-wash shadow-[inset_3px_0_0_var(--margin)]" : "",
                   )}
                 >
                   <span className="text-body font-semibold text-ink">{item.label}</span>
-                  <span className="text-small text-ink-soft">{item.detail}</span>
+                  <span className="text-body text-ink-soft">{item.detail}</span>
                 </button>
               </li>
             );

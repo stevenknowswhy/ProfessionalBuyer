@@ -55,7 +55,7 @@ export function SettingsScreen({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-body font-semibold text-ink">Shopping</h2>
-        <p className="text-small text-ink-soft">Online, local, or a mix of both.</p>
+        <p className="text-body text-ink-soft">Online, local, or a mix of both.</p>
         <ShoppingChoices value={draft.shopping} error={errors.shopping} onChange={(shopping) => patch({ shopping })} />
       </section>
 
@@ -72,7 +72,7 @@ export function SettingsScreen({
       <button
         type="button"
         onClick={save}
-        className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised"
+        className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-body font-semibold text-paper-raised"
       >
         Save profile
       </button>
@@ -96,7 +96,7 @@ export function SettingsScreen({
             <button
               type="button"
               onClick={onClearMock}
-              className="pressable min-h-12 w-full rounded-chip border border-rule bg-paper px-4 text-small font-semibold text-ink"
+              className="pressable min-h-12 w-full rounded-chip border border-rule bg-paper px-4 text-body font-semibold text-ink"
             >
               Clear mock data
             </button>

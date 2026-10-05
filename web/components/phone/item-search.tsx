@@ -31,7 +31,7 @@ export function ItemSearch({
       </div>
       <form onSubmit={search} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1.5">
-          <span className="text-small font-semibold text-ink">Item</span>
+          <span className="text-body font-semibold text-ink">Item</span>
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
@@ -42,7 +42,7 @@ export function ItemSearch({
         </label>
         <button
           type="submit"
-          className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised"
+          className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-body font-semibold text-paper-raised"
         >
           Search stores
         </button>

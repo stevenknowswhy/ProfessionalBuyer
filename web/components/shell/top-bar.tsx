@@ -5,9 +5,7 @@ import type { DataSource } from "@/lib/api";
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={className}>
-      <span className="font-display text-[1.75rem] leading-none tracking-[-0.02em] text-ink [font-variation-settings:'opsz'_48]">
-        Genie
-      </span>
+      <span className="type-wordmark text-ink">Genie</span>
     </span>
   );
 }

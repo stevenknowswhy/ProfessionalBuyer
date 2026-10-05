@@ -86,7 +86,7 @@ export function CaptureReceipt({
               type="button"
               onClick={readPhoto}
               disabled={reading}
-              className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-small font-semibold text-paper-raised disabled:opacity-60"
+              className="pressable min-h-12 w-full rounded-chip bg-ink px-4 text-body font-semibold text-paper-raised disabled:opacity-60"
             >
               {reading ? "Reading the receipt" : "Read this receipt"}
             </button>

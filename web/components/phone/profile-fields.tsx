@@ -155,7 +155,7 @@ export function ShoppingChoices({
   onChange: (mode: ShoppingMode) => void;
 }) {
   return (
-    <fieldset className="flex flex-col gap-2">
+    <fieldset className="flex flex-col border-t border-rule">
       <legend className="sr-only">How you prefer to shop</legend>
       {SHOPPING_OPTIONS.map((option) => {
         const selected = value === option.id;
@@ -167,8 +167,8 @@ export function ShoppingChoices({
             aria-checked={selected}
             onClick={() => onChange(option.id)}
             className={cn(
-              "pressable flex min-h-16 w-full flex-col items-start justify-center gap-0.5 rounded-card px-4 py-3 text-left",
-              selected ? "bg-margin-wash shadow-[inset_0_0_0_2px_var(--margin)]" : "surface",
+              "pressable flex min-h-16 w-full flex-col items-start justify-center gap-1 border-b border-rule px-1 py-3 text-left",
+              selected ? "bg-margin-wash px-3 shadow-[inset_3px_0_0_var(--margin)]" : "",
             )}
           >
             <span className="text-body font-semibold text-ink">{option.title}</span>
@@ -203,7 +203,7 @@ export function InternationalChoices({
     },
   ];
   return (
-    <fieldset className="flex flex-col gap-2">
+    <fieldset className="flex flex-col border-t border-rule">
       <legend className="sr-only">{INTERNATIONAL_QUESTION}</legend>
       {options.map((option) => {
         const selected = value === option.id;
@@ -215,8 +215,8 @@ export function InternationalChoices({
             aria-checked={selected}
             onClick={() => onChange(option.id)}
             className={cn(
-              "pressable flex min-h-16 w-full flex-col items-start justify-center gap-0.5 rounded-card px-4 py-3 text-left",
-              selected ? "bg-margin-wash shadow-[inset_0_0_0_2px_var(--margin)]" : "surface",
+              "pressable flex min-h-16 w-full flex-col items-start justify-center gap-1 border-b border-rule px-1 py-3 text-left",
+              selected ? "bg-margin-wash px-3 shadow-[inset_3px_0_0_var(--margin)]" : "",
             )}
           >
             <span className="text-body font-semibold text-ink">{option.title}</span>
