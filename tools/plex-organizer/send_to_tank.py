@@ -142,6 +142,7 @@ button.link { margin-left: 8px; }
 <body>
 <main>
   <h1>Send to Tank</h1>
+  <div class="status working" id="status">Starting…</div>
   <p class="lede">Drop a video from this Mac. Pick where it belongs. Send puts it in that Tank folder and asks Plex to file the collection.</p>
   <div class="drop" id="drop">
     <div>
@@ -156,7 +157,6 @@ button.link { margin-left: 8px; }
   <h2>Collection</h2>
   <div class="pills" id="collections"></div>
   <button class="send" id="send" disabled>Send</button>
-  <div class="status working" id="status">Connecting to the server…</div>
 </main>
 <script>
 const drop = document.getElementById("drop");
@@ -166,7 +166,13 @@ const collectionsEl = document.getElementById("collections");
 const send = document.getElementById("send");
 const statusEl = document.getElementById("status");
 let files = [];
-let libraries = [];
+let libraries = [
+  {id: "YouTube", name: "YouTube", collections: ["Reactions", "Politics", "International", "Tech", "Science", "Culture", "Other"]},
+  {id: "Movies", name: "Movies", collections: ["US", "Korean", "China", "Japan"]},
+  {id: "TV Shows", name: "TV Shows", collections: ["Korean", "US", "China", "Japan"]},
+  {id: "Training", name: "Training", collections: ["ESOP"]},
+  {id: "Home Videos", name: "Home Videos", collections: []}
+];
 let libraryId = null;
 let collection = null;
 
@@ -262,7 +268,7 @@ send.addEventListener("click", async () => {
   let failed = false;
   for (const file of files) {
     note("Sending " + file.name);
-    const url = "/api/send?library=" + libraryId + "&collection=" + encodeURIComponent(collection || "") + "&filename=" + encodeURIComponent(file.name);
+    const url = "/api/send?library=" + encodeURIComponent(libraryId) + "&collection=" + encodeURIComponent(collection || "") + "&filename=" + encodeURIComponent(file.name);
     try {
       const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file });
       const payload = await response.json().catch(() => ({ message: "Send failed" }));
@@ -310,6 +316,9 @@ async function loadLibraries() {
     finishActivity(error.message, false);
   }
 }
+renderLibraries();
+renderCollections();
+finishActivity("Locations are ready. Checking Plex for updates.", true);
 loadLibraries();
 </script>
 </body>
@@ -318,10 +327,23 @@ loadLibraries();
 
 
 def db_connection() -> sqlite3.Connection:
-    connection = sqlite3.connect(DB, timeout=3)
+    uri = Path(DB).as_uri() + "?mode=ro&nolock=1"
+    connection = sqlite3.connect(uri, uri=True, timeout=3)
     connection.execute("PRAGMA busy_timeout=3000")
     connection.execute("PRAGMA query_only=ON")
     return connection
+
+
+def library_roots() -> dict[str, str]:
+    return {
+        "YouTube": os.path.join(MEDIA_ROOT, "Plex", "YouTube"),
+        "Movies": os.path.join(MEDIA_ROOT, "Plex", "Movies"),
+        "TV Shows": os.path.join(MEDIA_ROOT, "Plex", "TV Shows"),
+        "Training": os.path.join(MEDIA_ROOT, "Plex", "Training"),
+        "Home Videos": os.path.join(MEDIA_ROOT, "Plex", "Home Videos"),
+        "Phone Videos": os.path.join(MEDIA_ROOT, "Plex", "Phone Videos"),
+        "Clips": os.path.join(MEDIA_ROOT, "Plex", "Clips"),
+    }
 
 
 def host_path(plex_path: str) -> str:
@@ -442,12 +464,13 @@ def libraries() -> list[dict]:
     return []
 
 
-def destination(library_id: int, collection: str, filename: str) -> tuple[str, dict]:
-    chosen = next((item for item in libraries() if item["id"] == library_id), None)
-    if chosen is None:
+def destination(library_name: str, collection: str, filename: str) -> tuple[str, dict]:
+    roots = library_roots()
+    if library_name not in roots:
         raise ValueError("unknown library")
-    if collection and (collection not in chosen["collections"] or "/" in collection or collection in {".", ".."}):
+    if collection and (not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9 ._'()-]{0,80}", collection)):
         raise ValueError("unknown collection")
+    chosen = {"id": library_name, "name": library_name, "path": roots[library_name], "collections": []}
     folder = chosen["path"] if not collection else os.path.join(chosen["path"], collection)
     root = os.path.realpath(chosen["path"])
     os.makedirs(folder, exist_ok=True)
@@ -561,10 +584,10 @@ class Handler(BaseHTTPRequestHandler):
             return
         query = urllib.parse.parse_qs(parsed.query)
         try:
-            library_id = int(query.get("library", ["0"])[0])
+            library_name = query.get("library", [""])[0]
             collection = query.get("collection", [""])[0]
             filename = query.get("filename", [""])[0]
-            dest, chosen = destination(library_id, collection, filename)
+            dest, chosen = destination(library_name, collection, filename)
             length = int(self.headers.get("Content-Length", "0"))
             if length <= 0:
                 raise ValueError("empty file")
@@ -583,7 +606,11 @@ class Handler(BaseHTTPRequestHandler):
             os.replace(temporary, dest)
             attached = False
             try:
-                attached = attach_collection(library_id, dest, collection)
+                connection = db_connection()
+                row = connection.execute("SELECT id FROM library_sections WHERE name = ?", (library_name,)).fetchone()
+                connection.close()
+                if row and collection:
+                    attached = attach_collection(row[0], dest, collection)
             except Exception:
                 attached = False
             message = f"{chosen['name']} / {collection}" if collection else chosen["name"]
