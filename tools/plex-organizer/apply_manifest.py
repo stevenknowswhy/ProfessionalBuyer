@@ -14,6 +14,13 @@ import time
 
 ALLOWED_DEST_PREFIXES = (
     "/srv/tank/Media/Plex/",
+    "/srv/tank/Movies/",
+    "/srv/tank/TV Shows/",
+    "/srv/tank/Training/",
+    "/srv/tank/Home Videos/",
+    "/srv/tank/Phone Videos/",
+    "/srv/tank/Clips/",
+    "/srv/tank/To Sort/",
     "/srv/tank/Documents/",
     "/srv/tank/Photos/",
     "/srv/tank/Subtitles/",
