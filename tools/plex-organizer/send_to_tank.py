@@ -11,8 +11,11 @@ import json
 import os
 import re
 import sqlite3
+import time
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -108,9 +111,32 @@ button.send {
 }
 button.send:disabled { opacity: 0.35; cursor: default; }
 button.link { margin-left: 8px; }
-.status { margin-top: 18px; white-space: pre-wrap; }
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 18px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  white-space: pre-wrap;
+}
+.status.working::before, .status.err::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--brass);
+}
+.status.working::before { animation: pulse 1s infinite; }
+.status.err { color: #8d2b1f; border-color: #e3b2ab; }
+.status.err::before { background: #8d2b1f; }
 .status.ok { color: var(--good); }
-.status.err { color: #8d2b1f; }
+.status.ok::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--good); flex: 0 0 auto; }
+@keyframes pulse { 50% { opacity: 0.25; } }
 </style>
 </head>
 <body>
@@ -130,7 +156,7 @@ button.link { margin-left: 8px; }
   <h2>Collection</h2>
   <div class="pills" id="collections"></div>
   <button class="send" id="send" disabled>Send</button>
-  <div class="status" id="status">Loading libraries from Plex…</div>
+  <div class="status working" id="status">Connecting to the server…</div>
 </main>
 <script>
 const drop = document.getElementById("drop");
@@ -205,39 +231,83 @@ drop.addEventListener("drop", (event) => {
 });
 document.getElementById("browse").addEventListener("click", () => document.getElementById("picker").click());
 document.getElementById("picker").addEventListener("change", (event) => addFiles(event.target.files));
+let activity = null;
+function beginActivity(message) {
+  if (activity) clearInterval(activity.timer);
+  activity = { message, changed: Date.now(), started: Date.now(), timer: null };
+  const paint = () => {
+    const step = Math.round((Date.now() - activity.changed) / 1000);
+    const total = Math.round((Date.now() - activity.started) / 1000);
+    statusEl.textContent = activity.message + "\n" + step + "s on this step · " + total + "s total";
+    statusEl.className = step >= 8 ? "status err" : "status working";
+  };
+  paint();
+  activity.timer = setInterval(paint, 500);
+}
+function note(message) {
+  if (!activity) beginActivity(message);
+  activity.message = message;
+  activity.changed = Date.now();
+}
+function finishActivity(message, ok) {
+  if (activity) clearInterval(activity.timer);
+  activity = null;
+  statusEl.className = ok ? "status ok" : "status err";
+  statusEl.textContent = message;
+}
 send.addEventListener("click", async () => {
   send.disabled = true;
-  statusEl.className = "status";
+  beginActivity("Sending " + files[0].name);
   const lines = [];
+  let failed = false;
   for (const file of files) {
-    statusEl.textContent = "Sending " + file.name + "…";
+    note("Sending " + file.name);
     const url = "/api/send?library=" + libraryId + "&collection=" + encodeURIComponent(collection || "") + "&filename=" + encodeURIComponent(file.name);
-    const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file });
-    const payload = await response.json().catch(() => ({ message: "Send failed" }));
-    lines.push((response.ok ? "Sent " : "Failed ") + file.name + " — " + (payload.message || ""));
-    if (!response.ok) break;
+    try {
+      const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file });
+      const payload = await response.json().catch(() => ({ message: "Send failed" }));
+      lines.push((response.ok ? "Sent " : "Failed ") + file.name + " — " + (payload.message || ""));
+      if (!response.ok) { failed = true; break; }
+    } catch (error) {
+      lines.push("Failed " + file.name + " — " + error.message);
+      failed = true;
+      break;
+    }
   }
-  statusEl.textContent = lines.join("\n");
-  statusEl.className = "status " + (lines.some((line) => line.startsWith("Failed")) ? "err" : "ok");
-  if (!lines.some((line) => line.startsWith("Failed"))) files = [];
+  finishActivity(lines.join("\n"), !failed);
+  if (!failed) files = [];
   renderFiles();
   refreshSend();
 });
 async function loadLibraries() {
-  statusEl.textContent = "Loading libraries from Plex…";
+  beginActivity("Connecting to the server");
   try {
     const response = await fetch("/api/libraries");
-    const payload = await response.json();
-    if (!response.ok || !Array.isArray(payload)) {
-      throw new Error(payload.message || "Could not read Plex libraries");
+    if (!response.ok || !response.body) throw new Error("Library request failed");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      buffer += decoder.decode(chunk.value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const event = JSON.parse(line);
+        if (event.type === "progress") note(event.message);
+        if (event.type === "error") throw new Error(event.message);
+        if (event.type === "ready") {
+          libraries = event.libraries;
+          finishActivity(libraries.length ? "Ready. " + libraries.length + " libraries." : "Plex returned no video libraries.", true);
+          renderLibraries();
+          renderCollections();
+        }
+      }
     }
-    libraries = payload;
-    statusEl.textContent = libraries.length ? "" : "Plex returned no video libraries.";
-    renderLibraries();
-    renderCollections();
   } catch (error) {
-    statusEl.className = "status err";
-    statusEl.textContent = error.message;
+    finishActivity(error.message, false);
   }
 }
 loadLibraries();
@@ -282,22 +352,41 @@ def clean_name(filename: str) -> str:
     return name
 
 
-def folder_pills(root: str) -> list[str]:
+def run_bounded(func, seconds: float):
+    pool = ThreadPoolExecutor(max_workers=1)
+    try:
+        return pool.submit(func).result(timeout=seconds)
+    except FutureTimeout:
+        return None
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+
+def folder_pills(root: str) -> list[str] | None:
     if not os.path.isdir(root):
         return []
-    names = []
-    for name in sorted(os.listdir(root)):
+    names = run_bounded(lambda: os.listdir(root), 5)
+    if names is None:
+        return None
+    kept = []
+    for name in sorted(names):
         if not os.path.isdir(os.path.join(root, name)):
             continue
         if name in SKIP_FOLDERS or DATE_FOLDER.match(name):
             continue
-        names.append(name)
-    return names
+        kept.append(name)
+    return kept
 
 
-def libraries() -> list[dict]:
-    connection = db_connection()
+def iter_libraries():
+    yield {"type": "progress", "message": "Opening the Plex database"}
     try:
+        connection = db_connection()
+    except Exception as exc:
+        yield {"type": "error", "message": "Could not open the Plex database. " + str(exc)}
+        return
+    try:
+        yield {"type": "progress", "message": "Reading the library list"}
         sections = connection.execute(
             "SELECT s.id, s.name, l.root_path FROM library_sections s "
             "JOIN section_locations l ON l.library_section_id = s.id ORDER BY s.name"
@@ -307,8 +396,22 @@ def libraries() -> list[dict]:
             try:
                 root = host_path(root_path)
             except ValueError:
+                yield {"type": "progress", "message": name + " skipped. Its folder is outside Tank."}
                 continue
-            names = set(folder_pills(root))
+            yield {"type": "progress", "message": "Checking folders for " + name}
+            pills = folder_pills(root)
+            names = set()
+            if pills is None:
+                yield {"type": "progress", "message": "Stuck listing folders for " + name + ". Skipping that list."}
+            else:
+                names.update(pills)
+            yield {"type": "progress", "message": "Reading collections for " + name}
+            started = time.time()
+
+            def progress() -> int:
+                return 1 if time.time() - started > 8 else 0
+
+            connection.set_progress_handler(progress, 10000)
             try:
                 rows = connection.execute(
                     "SELECT DISTINCT t.tag FROM tags t "
@@ -319,11 +422,24 @@ def libraries() -> list[dict]:
                 ).fetchall()
                 names.update(tag for (tag,) in rows)
             except sqlite3.OperationalError as exc:
-                print(f"collections for {name} skipped: {exc}")
+                yield {"type": "progress", "message": "Collections for " + name + " did not finish. " + str(exc)}
+            finally:
+                connection.set_progress_handler(None, 0)
             found.append({"id": section_id, "name": name, "path": root, "collections": sorted(names)})
-        return found
+        yield {"type": "ready", "libraries": found}
+    except Exception as exc:
+        yield {"type": "error", "message": str(exc)}
     finally:
         connection.close()
+
+
+def libraries() -> list[dict]:
+    for event in iter_libraries():
+        if event["type"] == "error":
+            raise RuntimeError(event["message"])
+        if event["type"] == "ready":
+            return event["libraries"]
+    return []
 
 
 def destination(library_id: int, collection: str, filename: str) -> tuple[str, dict]:
@@ -414,10 +530,18 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         if self.path.startswith("/api/libraries"):
+            self.send_response(200)
+            self.send_header("Content-Type", "application/x-ndjson")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
             try:
-                self._json(200, libraries())
+                for event in iter_libraries():
+                    print(event.get("message") or event["type"], flush=True)
+                    self.wfile.write((json.dumps(event) + "\n").encode())
+                    self.wfile.flush()
             except Exception as exc:
-                self._json(500, {"message": str(exc)})
+                self.wfile.write((json.dumps({"type": "error", "message": str(exc)}) + "\n").encode())
+                self.wfile.flush()
             return
         if self.path.split("?", 1)[0] == "/":
             body = PAGE.encode()
