@@ -41,7 +41,7 @@ plex=/srv/tank/Media/Plex
 mkdir -p \
   "$plex/Movies/US" "$plex/Movies/Korean" "$plex/Movies/China" "$plex/Movies/Japan" \
   "$plex/TV Shows/Korean" "$plex/TV Shows/US" "$plex/TV Shows/China" "$plex/TV Shows/Japan" \
-  "$plex/Training/ESOP" "$plex/Home Videos" "$plex/Phone Videos" "$plex/Clips" \
+  "$plex/Training/ESOP" "$plex/Home Videos" "$plex/Phone Videos" "$plex/Clips" "$plex/YouTube" \
   /srv/tank/Documents /srv/tank/Photos /srv/tank/Subtitles /srv/tank/Code
 
 for dir in "$plex/Movies"/*; do
@@ -70,6 +70,7 @@ bind_folder "$plex/Training" /srv/tank/Training
 bind_folder "$plex/Home Videos" "/srv/tank/Home Videos"
 bind_folder "$plex/Phone Videos" "/srv/tank/Phone Videos"
 bind_folder "$plex/Clips" /srv/tank/Clips
+bind_folder "$plex/YouTube" /srv/tank/YouTube
 
 chown -R 1000:1000 "$plex" /srv/tank/To\ Sort || true
 
@@ -82,6 +83,7 @@ Training        Lessons. ESOP is inside this folder.
 Home Videos     Personal videos you have decided belong in Plex.
 Phone Videos    Phone clips you have decided belong in Plex.
 Clips           Short clips you have decided belong in Plex.
+YouTube         Browser downloads named videoplayback, grouped by the day they were saved.
 To Sort         Videos that still need a destination.
 Documents       Papers, spreadsheets, and notes.
 Photos          Pictures.

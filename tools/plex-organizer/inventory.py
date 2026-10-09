@@ -52,8 +52,10 @@ def library_for(path: str) -> str:
         return "Home Videos"
     if "/Media/Plex/Phone Videos" in path:
         return "Phone Videos"
-    if "/Media/Plex/Clips" in path:
+    if "/Media/Plex/Clips" in path or path.startswith("/srv/tank/Clips"):
         return "Clips"
+    if "/Media/Plex/YouTube" in path or path.startswith("/srv/tank/YouTube"):
+        return "YouTube"
     if path.startswith("/srv/tank/Videos"):
         return "Videos"
     if path.startswith("/srv/tank/Media"):

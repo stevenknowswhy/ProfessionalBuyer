@@ -20,6 +20,7 @@ ALLOWED_DEST_PREFIXES = (
     "/srv/tank/Home Videos/",
     "/srv/tank/Phone Videos/",
     "/srv/tank/Clips/",
+    "/srv/tank/YouTube/",
     "/srv/tank/To Sort/",
     "/srv/tank/Documents/",
     "/srv/tank/Photos/",
