@@ -130,7 +130,7 @@ button.link { margin-left: 8px; }
   <h2>Collection</h2>
   <div class="pills" id="collections"></div>
   <button class="send" id="send" disabled>Send</button>
-  <div class="status" id="status"></div>
+  <div class="status" id="status">Loading libraries from Plex…</div>
 </main>
 <script>
 const drop = document.getElementById("drop");
@@ -224,9 +224,21 @@ send.addEventListener("click", async () => {
   refreshSend();
 });
 async function loadLibraries() {
-  libraries = await (await fetch("/api/libraries")).json();
-  renderLibraries();
-  renderCollections();
+  statusEl.textContent = "Loading libraries from Plex…";
+  try {
+    const response = await fetch("/api/libraries");
+    const payload = await response.json();
+    if (!response.ok || !Array.isArray(payload)) {
+      throw new Error(payload.message || "Could not read Plex libraries");
+    }
+    libraries = payload;
+    statusEl.textContent = libraries.length ? "" : "Plex returned no video libraries.";
+    renderLibraries();
+    renderCollections();
+  } catch (error) {
+    statusEl.className = "status err";
+    statusEl.textContent = error.message;
+  }
 }
 loadLibraries();
 </script>
@@ -236,8 +248,10 @@ loadLibraries();
 
 
 def db_connection() -> sqlite3.Connection:
-    uri = Path(DB).resolve().as_uri() + "?mode=ro"
-    return sqlite3.connect(uri, uri=True, timeout=8)
+    connection = sqlite3.connect(DB, timeout=3)
+    connection.execute("PRAGMA busy_timeout=3000")
+    connection.execute("PRAGMA query_only=ON")
+    return connection
 
 
 def host_path(plex_path: str) -> str:
@@ -288,27 +302,28 @@ def libraries() -> list[dict]:
             "SELECT s.id, s.name, l.root_path FROM library_sections s "
             "JOIN section_locations l ON l.library_section_id = s.id ORDER BY s.name"
         ).fetchall()
-        collection_rows = connection.execute(
-            "SELECT DISTINCT m.library_section_id, t.tag FROM tags t "
-            "JOIN taggings tg ON tg.tag_id = t.id "
-            "JOIN metadata_items m ON m.id = tg.metadata_item_id "
-            "WHERE t.tag_type = 2"
-        ).fetchall()
+        found = []
+        for section_id, name, root_path in sections:
+            try:
+                root = host_path(root_path)
+            except ValueError:
+                continue
+            names = set(folder_pills(root))
+            try:
+                rows = connection.execute(
+                    "SELECT DISTINCT t.tag FROM tags t "
+                    "JOIN taggings tg ON tg.tag_id = t.id "
+                    "JOIN metadata_items m ON m.id = tg.metadata_item_id "
+                    "WHERE t.tag_type = 2 AND m.library_section_id = ?",
+                    (section_id,),
+                ).fetchall()
+                names.update(tag for (tag,) in rows)
+            except sqlite3.OperationalError as exc:
+                print(f"collections for {name} skipped: {exc}")
+            found.append({"id": section_id, "name": name, "path": root, "collections": sorted(names)})
+        return found
     finally:
         connection.close()
-    by_section: dict[int, set[str]] = {}
-    for section_id, tag in collection_rows:
-        by_section.setdefault(section_id, set()).add(tag)
-    found = []
-    for section_id, name, root_path in sections:
-        try:
-            root = host_path(root_path)
-        except ValueError:
-            continue
-        names = set(by_section.get(section_id, set()))
-        names.update(folder_pills(root))
-        found.append({"id": section_id, "name": name, "path": root, "collections": sorted(names)})
-    return found
 
 
 def destination(library_id: int, collection: str, filename: str) -> tuple[str, dict]:
@@ -394,6 +409,10 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
+        if self.path == "/favicon.ico":
+            self.send_response(204)
+            self.end_headers()
+            return
         if self.path.startswith("/api/libraries"):
             try:
                 self._json(200, libraries())
